@@ -8,7 +8,7 @@ pub fn key_pressed(_app: &App, model: &mut Model, key: Key) {
         Key::W => {
             model.flock.push(Boid::new(
                 Vec2::new(0.0, 0.0),
-                Vec2::new(random_range(-0.2, 0.2), random_range(-0.2, 0.2)),
+                Vec2::new(random_range(-0.1, 0.1), random_range(-0.1, 0.1)),
                 Vec2::new(0.0, 0.0),
             ));
         }

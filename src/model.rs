@@ -25,7 +25,7 @@ impl Model {
         for _ in 0..256 {
             flock.push(Boid::new(
                 Vec2::new(random_range(-5.0, 5.0), random_range(-5.0, 5.0)),
-                Vec2::new(random_range(-0.2, 0.2), random_range(-0.2, 0.2)),
+                Vec2::new(random_range(-0.1, 0.1), random_range(-0.1, 0.1)),
                 Vec2::new(0.0, 0.0),
             ))
         }

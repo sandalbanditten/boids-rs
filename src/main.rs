@@ -11,9 +11,16 @@ fn main() {
 }
 
 // Update the state of our application every frame
-fn update(_app: &App, model: &mut Model, _update: Update) {
+fn update(app: &App, model: &mut Model, _update: Update) {
+    // TODO: This is so bad
+    let mut temp_flock = model.flock.clone();
+    for boid in &mut temp_flock {
+        boid.flock(&mut model.flock);
+    }
+    model.flock = temp_flock;
+
     for boid in &mut model.flock {
-        boid.update();
+        boid.update(app.window_rect());
     }
 }
 
@@ -26,6 +33,7 @@ fn view(app: &App, model: &Model, frame: Frame) {
     draw.background().rgb(0.0, 0.0, 0.0);
 
     for boid in &model.flock {
+        boid.show_perception(&draw);
         boid.show(&draw);
     }
 
