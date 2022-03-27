@@ -13,9 +13,10 @@ fn main() {
 // Update the state of our application every frame
 fn update(app: &App, model: &mut Model, _update: Update) {
     // TODO: This is so bad
+    // Ask on a forum?
     let mut temp_flock = model.flock.clone();
     for boid in &mut temp_flock {
-        boid.flock(&mut model.flock);
+        boid.flock(&model.flock);
     }
     model.flock = temp_flock;
 
@@ -30,7 +31,7 @@ fn view(app: &App, model: &Model, frame: Frame) {
     let draw = app.draw();
 
     // Draw background
-    draw.background().rgb(0.0, 0.0, 0.0);
+    draw.background().rgb(0.1, 0.1, 0.1);
 
     for boid in &model.flock {
         boid.show_perception(&draw);

@@ -60,6 +60,9 @@ impl Boid {
         self.position += self.velocity;
         self.velocity += self.acceleration;
 
+        // Reset the acceleration
+        self.acceleration = Vec2::ZERO;
+
         // Check if stuff is inside bounds
         if self.position.x < win_rect.left() + self.radius {
             self.position.x = win_rect.right() - self.radius;
@@ -76,14 +79,16 @@ impl Boid {
     }
 
     pub fn flock(&mut self, flock: &Vec<Boid>) {
+        // The three rules
         let alignment = self.align(flock);
-        self.acceleration = alignment;
+        let cohesion = self.cohere(flock);
+        self.acceleration = alignment + cohesion;
     }
 
     // Aligns this boids steering with the average of the boids within perception_ranges steeruing
     fn align(&mut self, flock: &Vec<Boid>) -> Vec2 {
         // Compute the average steering
-        let mut average_steering = Vec2::new(0.0, 0.0);
+        let mut average_steering = Vec2::ZERO;
         let mut total = 0;
         for other in flock.iter() {
             let distance = self.position.distance(other.position);
@@ -104,5 +109,32 @@ impl Boid {
             average_steering = average_steering.clamp_length_max(self.max_force);
         }
         average_steering
+    }
+
+    fn cohere(&mut self, flock: &Vec<Boid>) -> Vec2 {
+        // Compute the average location
+        let mut average_location = Vec2::ZERO;
+        let mut total = 0;
+        for other in flock.iter() {
+            let distance = self.position.distance(other.position);
+            // Only count the ones within perception_radius and the ones that arent itself
+            if distance < self.perception_radius && self != other {
+                average_location += other.position;
+                total += 1;
+            }
+        }
+
+        // Only change self if there is actually any boids nearby
+        if total > 0 {
+            // Divides the average by a vector with the values of the length of the part of flock within perception
+            // The average steering
+            average_location /= Vec2::new(total as f32, total as f32);
+            average_location -= self.position;
+            average_location = average_location.clamp_length(self.max_speed, self.max_speed);
+            average_location -= self.velocity;
+            // Only get affected by the other boids by a certain amount
+            average_location = average_location.clamp_length_max(self.max_force);
+        }
+        average_location
     }
 }

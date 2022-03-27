@@ -13,7 +13,7 @@ impl Model {
         // Creating the window
         let _window = app
             .new_window()
-            .title("Template!")
+            .title("boids!")
             // Functions to call
             .key_pressed(key_pressed)
             .key_released(key_released)
@@ -22,10 +22,17 @@ impl Model {
             .unwrap();
 
         let mut flock: Vec<Boid> = Vec::new();
+        let win_rect: Rect = app.window_rect();
         for _ in 0..256 {
             flock.push(Boid::new(
-                Vec2::new(random_range(-5.0, 5.0), random_range(-5.0, 5.0)),
+                    // Position vector
+                Vec2::new(
+                    random_range(win_rect.left(), win_rect.right()),
+                    random_range(win_rect.bottom(), win_rect.top()),
+                ),
+                // Velocity vector
                 Vec2::new(random_range(-0.1, 0.1), random_range(-0.1, 0.1)),
+                // Acceleration vector
                 Vec2::new(0.0, 0.0),
             ))
         }
