@@ -12,17 +12,12 @@ fn main() {
 
 // Update the state of our application every frame
 fn update(app: &App, model: &mut Model, _update: Update) {
-    // TODO: This is so bad
-    // Ask on a forum?
+    // TODO: Still pretty bad
     let mut temp_flock = model.flock.clone();
     for boid in &mut temp_flock {
-        boid.flock(&model.flock);
+        boid.flock(&mut model.flock, app.window_rect());
     }
     model.flock = temp_flock;
-
-    for boid in &mut model.flock {
-        boid.update(app.window_rect());
-    }
 }
 
 // Draw our stuff to the screen every frame
