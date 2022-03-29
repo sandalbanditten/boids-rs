@@ -12,12 +12,14 @@ pub fn key_pressed(app: &App, model: &mut Model, key: Key) {
                 Vec2::new(0.0, 0.0),
             ));
             // Set the new window title
-            app.main_window().set_title(format!("{} boids!", model.flock.len()).as_str());
+            app.main_window()
+                .set_title(format!("{} boids!", model.flock.len()).as_str());
         }
         Key::S => {
             model.flock.pop();
             // Set the new window title
-            app.main_window().set_title(format!("{} boids!", model.flock.len()).as_str());
+            app.main_window()
+                .set_title(format!("{} boids!", model.flock.len()).as_str());
         }
         _ => (),
     }
