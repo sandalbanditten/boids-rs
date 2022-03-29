@@ -14,7 +14,7 @@ impl Model {
         let _window = app
             .new_window()
             // TODO: Title here should reflect number of boids given with CLI args
-            .title("boids!")
+            .title("200 boids!")
             // Functions to call
             .key_pressed(key_pressed)
             .key_released(key_released)
@@ -24,7 +24,7 @@ impl Model {
 
         let mut flock: Vec<Boid> = Vec::new();
         let win_rect: Rect = app.window_rect();
-        for _ in 0..128 {
+        for _ in 0..200 {
             flock.push(Boid::new(
                 // Position vector
                 Vec2::new(

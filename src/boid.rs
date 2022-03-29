@@ -78,7 +78,7 @@ impl Boid {
         self.velocity += self.acceleration;
 
         // Making the speed at most max_speed
-        self.velocity.clamp_length(self.max_speed, self.max_speed);
+        self.velocity = self.velocity.clamp_length_max(self.max_speed);
 
         // Reset the acceleration
         self.acceleration = Vec2::ZERO;

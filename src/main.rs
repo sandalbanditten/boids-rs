@@ -31,9 +31,8 @@ fn view(app: &App, model: &Model, frame: Frame) {
 
     // TODO: Should also be toggleable
     // Only highlight the first boid, if he exists
-    match model.flock.first() {
-        Some(boid) => boid.show_perception(&draw),
-        None => (),
+    if let Some(boid) = model.flock.first() {
+        boid.show_perception(&draw)
     }
 
     for boid in &model.flock {
