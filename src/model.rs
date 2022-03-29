@@ -23,9 +23,9 @@ impl Model {
 
         let mut flock: Vec<Boid> = Vec::new();
         let win_rect: Rect = app.window_rect();
-        for _ in 0..256 {
+        for _ in 0..2 {
             flock.push(Boid::new(
-                    // Position vector
+                // Position vector
                 Vec2::new(
                     random_range(win_rect.left(), win_rect.right()),
                     random_range(win_rect.bottom(), win_rect.top()),
