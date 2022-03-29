@@ -25,9 +25,7 @@ impl Boid {
             acceleration,
             max_speed: 0.1,
             max_force: 0.0005,
-            color: Color::new(
-                1.0, 1.0, 1.0, 1.0,
-            ),
+            color: Color::new(1.0, 1.0, 1.0, 1.0),
             diameter: 0.3,
             radius: 0.3 / 2.0,
             perception_radius: 2.5,
@@ -62,7 +60,11 @@ impl Boid {
         let alignment = self.align(flock);
         let cohesion = self.cohere(flock);
         let separation = self.separate(flock);
-        self.acceleration = alignment + cohesion + separation;
+
+        // Updating the acceleration
+        self.acceleration += alignment;
+        self.acceleration += cohesion;
+        self.acceleration += separation;
 
         // Update colors based on pos, vel, and acc
         self.update_color(win_rect);
@@ -112,41 +114,38 @@ impl Boid {
     // TODO: Merge the three functions, for effeciency
     fn align(&mut self, flock: &Vec<Boid>) -> Vec2 {
         // Compute the average steering
-        let mut average_steering = Vec2::ZERO;
+        let mut steering = Vec2::ZERO;
         let mut total = 0;
         for other in flock.iter() {
             let distance = self.position.distance(other.position);
             // Only count the ones within perception_radius and the ones that arent itself
             if distance < self.perception_radius && self != other {
-                average_steering += other.velocity;
+                steering += other.velocity;
                 total += 1;
             }
         }
         if total > 0 {
             // Divides the average by a vector with the values of the length of the part of flock within perception
             // The average steering
-            average_steering /= Vec2::new(total as f32, total as f32);
-            // Setting the  vector to a specific length
-            average_steering = average_steering.clamp_length(self.max_speed, self.max_speed);
-            average_steering -= self.velocity;
+            steering /= Vec2::new(total as f32, total as f32);
+            // Set the length of the vector to the boids max speed
+            steering = steering.clamp_length(self.max_speed, self.max_speed);
+            steering -= self.velocity;
             // Only get affected by the other boids by a certain amount
-            average_steering = average_steering.clamp_length_max(self.max_force);
+            steering = steering.clamp_length_max(self.max_force);
         }
-        average_steering
+        steering
     }
 
     fn cohere(&mut self, flock: &Vec<Boid>) -> Vec2 {
-        // The final vector to steer towards
-        let mut steering = Vec2::ZERO;
-
         // Compute the average location
-        let mut average_location = Vec2::ZERO;
+        let mut steering = Vec2::ZERO;
         let mut total = 0;
         for other in flock.iter() {
             let distance = self.position.distance(other.position);
             // Only count the ones within perception_radius and the ones that arent itself
             if distance < self.perception_radius && self != other {
-                average_location += other.position;
+                steering += other.position;
                 total += 1;
             }
         }
@@ -154,13 +153,13 @@ impl Boid {
         // Only change self if there is actually any boids nearby
         if total > 0 {
             // Divides the average by a vector with the values of the length of the part of flock within perception
-            // The average location
-            average_location /= Vec2::new(total as f32, total as f32);
-            average_location -= self.position;
-            steering = average_location.clamp_length(self.max_speed, self.max_speed);
+            steering /= Vec2::new(total as f32, total as f32);
+            steering -= self.position;
+            // Set the length of the vector to the boids max speed
+            steering = steering.clamp_length(self.max_speed, self.max_speed);
             steering -= self.velocity;
             // Only get affected by the other boids by a certain amount
-            steering = average_location.clamp_length_max(self.max_force);
+            steering = steering.clamp_length_max(self.max_force);
         }
         steering
     }
@@ -168,15 +167,17 @@ impl Boid {
     fn separate(&mut self, flock: &Vec<Boid>) -> Vec2 {
         // The final vector to steer towards
         let mut steering = Vec2::ZERO;
-
-        // Compute the average location
-        let mut average_location = Vec2::ZERO;
         let mut total = 0;
+
         for other in flock {
             let distance = self.position.distance(other.position);
             // Only count the ones within perception_radius and the ones that arent itself
             if distance < self.perception_radius && self != other {
-                average_location += other.position;
+                let mut difference = self.position - other.position;
+                // Make the effect stronger the closer the boids are together
+                difference /= distance * distance * distance;
+                // Add the difference between positions
+                steering += difference;
                 total += 1;
             }
         }
@@ -184,13 +185,12 @@ impl Boid {
         // Only change self if there is actually any boids nearby
         if total > 0 {
             // Divides the average by a vector with the values of the length of the part of flock within perception
-            // The average location
-            average_location /= Vec2::new(total as f32, total as f32);
-            average_location -= self.position;
-            steering = average_location.clamp_length(self.max_speed, self.max_speed);
+            steering /= Vec2::new(total as f32, total as f32);
+            // Set the length of the vector to the boids max speed
+            steering = steering.clamp_length(self.max_speed, self.max_speed);
             steering -= self.velocity;
             // Only get affected by the other boids by a certain amount
-            steering = average_location.clamp_length_max(self.max_force);
+            steering = steering.clamp_length_max(self.max_force);
         }
         steering
     }
