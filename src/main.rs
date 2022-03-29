@@ -3,8 +3,8 @@ use nannou::prelude::*;
 pub mod boid;
 pub mod color;
 pub mod keys;
-pub mod model;
 pub mod math;
+pub mod model;
 
 fn main() {
     // Setting up the app
@@ -27,10 +27,18 @@ fn view(app: &App, model: &Model, frame: Frame) {
     let draw = app.draw();
 
     // Draw background
-    draw.background().rgb(0.1, 0.1, 0.1);
+    draw.background().rgb(0.1569, 0.1569, 0.1569);
+
+    // TODO: Should also be toggleable
+    // Only highlight the first boid, if he exists
+    match model.flock.first() {
+        Some(boid) => boid.show_perception(&draw),
+        None => (),
+    }
 
     for boid in &model.flock {
-        boid.show_perception(&draw);
+        // TODO: Should be toggleable
+        // boid.show_perception(&draw);
         boid.show(&draw);
     }
 

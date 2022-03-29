@@ -23,7 +23,7 @@ impl Boid {
             // Sets the length of the vector to 0.1
             velocity: velocity.normalize().clamp_length(0.1, 0.1),
             acceleration,
-            max_speed: 0.1,
+            max_speed: 0.075,
             max_force: 0.0005,
             color: Color::new(1.0, 1.0, 1.0, 1.0),
             diameter: 0.3,
@@ -111,7 +111,7 @@ impl Boid {
         )
     }
 
-    // TODO: Merge the three functions, for effeciency
+    // TODO: Merge the three functions, for efficiency
     fn align(&mut self, flock: &Vec<Boid>) -> Vec2 {
         // Compute the average steering
         let mut steering = Vec2::ZERO;
@@ -175,7 +175,7 @@ impl Boid {
             if distance < self.perception_radius && self != other {
                 let mut difference = self.position - other.position;
                 // Make the effect stronger the closer the boids are together
-                difference /= distance * distance * distance;
+                difference /= distance * distance;
                 // Add the difference between positions
                 steering += difference;
                 total += 1;
