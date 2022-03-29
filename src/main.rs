@@ -4,6 +4,7 @@ pub mod boid;
 pub mod color;
 pub mod keys;
 pub mod model;
+pub mod math;
 
 fn main() {
     // Setting up the app
@@ -15,7 +16,7 @@ fn update(app: &App, model: &mut Model, _update: Update) {
     // TODO: Still pretty bad
     let mut temp_flock = model.flock.clone();
     for boid in &mut temp_flock {
-        boid.flock(&mut model.flock, app.window_rect());
+        boid.flock(&model.flock, app.window_rect());
     }
     model.flock = temp_flock;
 }

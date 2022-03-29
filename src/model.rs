@@ -23,7 +23,7 @@ impl Model {
 
         let mut flock: Vec<Boid> = Vec::new();
         let win_rect: Rect = app.window_rect();
-        for _ in 0..2 {
+        for _ in 0..20 {
             flock.push(Boid::new(
                 // Position vector
                 Vec2::new(
