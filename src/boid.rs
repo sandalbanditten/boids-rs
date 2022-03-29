@@ -39,9 +39,17 @@ impl Boid {
 
     // Shows the boid to the screen
     pub fn show(&self, draw: &Draw) {
-        draw.ellipse()
-            .w_h(self.diameter, self.diameter)
+        draw.tri()
             .xy(self.position)
+            // A triangle pointing to the right - so it has an angle of zero degrees
+            .points(
+                Point2::new(self.diameter, 0.0),
+                Point2::new(-self.diameter, -self.diameter),
+                Point2::new(-self.diameter, self.diameter),
+            )
+            .w_h(self.diameter, self.diameter)
+            // Set it's angle to the boids velocity
+            .rotate(self.velocity.angle())
             .rgba8(self.color.r, self.color.g, self.color.b, self.color.a);
     }
 
@@ -52,13 +60,26 @@ impl Boid {
             .rgba8(255, 255, 255, 1);
     }
 
-    // Updating the position and velocity of the boid
-    pub fn update(&mut self, win_rect: Rect) {
-        // Making the speed at most max_speed
-        self.velocity.clamp_length_max(self.max_speed);
+    pub fn flock(&mut self, flock: &Vec<Boid>, win_rect: Rect) {
+        // The three rules
+        let alignment = self.align(flock);
+        let cohesion = self.cohere(flock);
+        let separation = self.separate(flock);
+        self.acceleration = alignment + cohesion + separation;
 
+        // Update velocity and position
+        self.update(win_rect);
+    }
+
+    // TODO: Fix the moving to edges
+
+    // Updating the position and velocity of the boid
+    fn update(&mut self, win_rect: Rect) {
         self.position += self.velocity;
         self.velocity += self.acceleration;
+
+        // Making the speed at most max_speed
+        self.velocity.clamp_length(self.max_speed, self.max_speed);
 
         // Reset the acceleration
         self.acceleration = Vec2::ZERO;
@@ -76,13 +97,6 @@ impl Boid {
         if self.position.y > win_rect.top() - self.radius {
             self.position.y = win_rect.bottom() + self.radius;
         }
-    }
-
-    pub fn flock(&mut self, flock: &Vec<Boid>) {
-        // The three rules
-        let alignment = self.align(flock);
-        let cohesion = self.cohere(flock);
-        self.acceleration = alignment + cohesion;
     }
 
     // Aligns this boids steering with the average of the boids within perception_ranges steeruing
@@ -112,6 +126,9 @@ impl Boid {
     }
 
     fn cohere(&mut self, flock: &Vec<Boid>) -> Vec2 {
+        // The final vector to steer towards
+        let mut steering = Vec2::ZERO;
+
         // Compute the average location
         let mut average_location = Vec2::ZERO;
         let mut total = 0;
@@ -127,14 +144,44 @@ impl Boid {
         // Only change self if there is actually any boids nearby
         if total > 0 {
             // Divides the average by a vector with the values of the length of the part of flock within perception
-            // The average steering
+            // The average location
             average_location /= Vec2::new(total as f32, total as f32);
             average_location -= self.position;
-            average_location = average_location.clamp_length(self.max_speed, self.max_speed);
-            average_location -= self.velocity;
+            steering = average_location.clamp_length(self.max_speed, self.max_speed);
+            steering -= self.velocity;
             // Only get affected by the other boids by a certain amount
-            average_location = average_location.clamp_length_max(self.max_force);
+            steering = average_location.clamp_length_max(self.max_force);
         }
-        average_location
+        steering
+    }
+
+    fn separate(&mut self, flock: &Vec<Boid>) -> Vec2 {
+        // The final vector to steer towards
+        let mut steering = Vec2::ZERO;
+
+        // Compute the average location
+        let mut average_location = Vec2::ZERO;
+        let mut total = 0;
+        for other in flock.iter() {
+            let distance = self.position.distance(other.position);
+            // Only count the ones within perception_radius and the ones that arent itself
+            if distance < self.perception_radius && self != other {
+                average_location += other.position;
+                total += 1;
+            }
+        }
+
+        // Only change self if there is actually any boids nearby
+        if total > 0 {
+            // Divides the average by a vector with the values of the length of the part of flock within perception
+            // The average location
+            average_location /= Vec2::new(total as f32, total as f32);
+            average_location -= self.position;
+            steering = average_location.clamp_length(self.max_speed * 10.0, self.max_speed * 10.0);
+            steering -= self.velocity;
+            // Only get affected by the other boids by a certain amount
+            steering = average_location.clamp_length_max(self.max_force * 10.0);
+        }
+        steering
     }
 }
