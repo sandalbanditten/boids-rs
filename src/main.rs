@@ -1,11 +1,11 @@
 use crate::model::Model;
 use nannou::prelude::*;
-pub mod boid;
-pub mod color;
-pub mod keys;
-pub mod math;
-pub mod model;
-pub mod window;
+mod boid;
+mod color;
+mod keys;
+mod math;
+mod model;
+mod window;
 
 fn main() {
     // Setting up the app
@@ -32,13 +32,17 @@ fn view(app: &App, model: &Model, frame: Frame) {
 
     // TODO: Should also be toggleable
     // Only highlight the first boid, if he exists
-    if let Some(boid) = model.flock.first() {
-        boid.show_perception(&draw)
+    if model.highlight_first {
+        if let Some(boid) = model.flock.first() {
+            boid.show_perception(&draw)
+        }
     }
 
     for boid in &model.flock {
         // TODO: Should be toggleable
-        // boid.show_perception(&draw);
+        if model.highlight_all {
+            boid.show_perception(&draw);
+        }
         boid.show(&draw);
     }
 

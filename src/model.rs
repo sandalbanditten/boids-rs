@@ -1,11 +1,13 @@
-use crate::boid::*;
+use crate::boid::Boid;
 use crate::keys::{key_pressed, key_released};
 use crate::view;
 use crate::window::*;
-use nannou::prelude::*;
+use nannou::prelude::{random_range, App, Rect, Vec2};
 
 pub struct Model {
     pub flock: Vec<Boid>,
+    pub highlight_all: bool,
+    pub highlight_first: bool,
 }
 
 impl Model {
@@ -43,6 +45,10 @@ impl Model {
         }
 
         // Our model is the state of our application, which can be accesed from all functions
-        Model { flock }
+        Model {
+            flock,
+            highlight_all: false,
+            highlight_first: true,
+        }
     }
 }

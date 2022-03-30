@@ -1,6 +1,6 @@
-use crate::color::*;
+use crate::color::Color;
 use crate::math::map;
-use nannou::prelude::*;
+use nannou::prelude::{Draw, Point2, Rect, Vec2, Vec2Angle};
 
 // So we can compare boids using ==
 #[derive(PartialEq, Clone)]
@@ -22,7 +22,7 @@ impl Boid {
         Boid {
             position,
             // Sets the length of the vector to 0.1
-            velocity: velocity.normalize().clamp_length(0.1, 0.1),
+            velocity: velocity.normalize().clamp_length(0.075, 0.075),
             acceleration,
             max_speed: 0.075,
             max_force: 0.0005,

@@ -1,6 +1,6 @@
 use crate::boid::Boid;
 use crate::model::Model;
-use nannou::prelude::*;
+use nannou::prelude::{random_range, App, Key, Vec2};
 
 pub fn key_pressed(app: &App, model: &mut Model, key: Key) {
     // An example
