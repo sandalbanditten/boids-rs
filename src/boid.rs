@@ -132,7 +132,6 @@ impl Boid {
                 lower,
                 upper,
             ),
-            // Map the direction of the bird
             1.0,
             1.0,
         )
