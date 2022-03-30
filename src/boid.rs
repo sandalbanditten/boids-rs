@@ -98,15 +98,40 @@ impl Boid {
         }
     }
 
+    pub fn change_position(&mut self, new_position: Vec2) {
+        self.position = new_position;
+    }
+
+    pub fn change_velocity(&mut self, new_velocity: Vec2) {
+        self.velocity = new_velocity;
+    }
+
     // Update the color of the boid, based on pos, vel and acc
     fn update_color(&mut self, win_rect: Rect) {
+        // The lower and upper possible rgb values for the boids
+        // Having them be != 0.0 or 1.0 means that there will be no fully black and no fully white
+        // boids
+        let lower = 0.2;
+        let upper = 0.8;
         self.color = Color::new(
             // Map left to right
-            map(self.position.x, win_rect.left(), win_rect.right(), 0.0, 1.0),
+            map(
+                self.position.x,
+                win_rect.left(),
+                win_rect.right(),
+                lower,
+                upper,
+            ),
             // Map bottom to top
-            map(self.position.y, win_rect.bottom(), win_rect.top(), 0.0, 1.0),
+            map(
+                self.position.y,
+                win_rect.bottom(),
+                win_rect.top(),
+                lower,
+                upper,
+            ),
             // Map the direction of the bird
-            map(self.velocity.angle(), 0.0, f32::TAU(), 0.5, 1.0),
+            map(self.velocity.angle(), 0.0, f32::TAU(), lower, upper),
             1.0,
         )
     }
