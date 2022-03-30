@@ -35,7 +35,8 @@ impl Model {
                 Vec2::new(random_range(-0.1, 0.1), random_range(-0.1, 0.1)),
                 // Acceleration vector
                 Vec2::new(0.0, 0.0),
-            ))
+                win_rect,
+            ));
         }
 
         // Our model is the state of our application, which can be accesed from all functions

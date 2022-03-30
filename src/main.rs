@@ -12,11 +12,11 @@ fn main() {
 }
 
 // Update the state of our application every frame
-fn update(app: &App, model: &mut Model, _update: Update) {
+fn update(_app: &App, model: &mut Model, _update: Update) {
     // TODO: Still pretty bad
     let mut temp_flock = model.flock.clone();
     for boid in &mut temp_flock {
-        boid.flock(&model.flock, app.window_rect());
+        boid.flock(&model.flock);
     }
     model.flock = temp_flock;
 }

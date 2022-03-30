@@ -14,10 +14,11 @@ pub struct Boid {
     diameter: f32,
     radius: f32,
     perception_radius: f32,
+    boundary_rect: Rect,
 }
 
 impl Boid {
-    pub fn new(position: Vec2, velocity: Vec2, acceleration: Vec2) -> Boid {
+    pub fn new(position: Vec2, velocity: Vec2, acceleration: Vec2, win_rect: Rect) -> Boid {
         Boid {
             position,
             // Sets the length of the vector to 0.1
@@ -29,6 +30,7 @@ impl Boid {
             diameter: 0.3,
             radius: 0.3 / 2.0,
             perception_radius: 2.5,
+            boundary_rect: win_rect,
         }
     }
 
@@ -55,7 +57,7 @@ impl Boid {
             .rgba8(255, 255, 255, 1);
     }
 
-    pub fn flock(&mut self, flock: &Vec<Boid>, win_rect: Rect) {
+    pub fn flock(&mut self, flock: &Vec<Boid>) {
         // The three rules
         let alignment = self.align(flock);
         let cohesion = self.cohere(flock);
@@ -67,13 +69,13 @@ impl Boid {
         self.acceleration += separation;
 
         // Update colors based on pos, vel, and acc
-        self.update_color(win_rect);
+        self.update_color();
         // Update velocity and position
-        self.update(win_rect);
+        self.update(self.boundary_rect);
     }
 
     // Updating the position and velocity of the boid
-    fn update(&mut self, win_rect: Rect) {
+    fn update(&mut self, boundary_rect: Rect) {
         self.position += self.velocity;
         self.velocity += self.acceleration;
 
@@ -84,17 +86,17 @@ impl Boid {
         self.acceleration = Vec2::ZERO;
 
         // Check if stuff is inside bounds
-        if self.position.x < win_rect.left() + self.radius {
-            self.position.x = win_rect.right() - self.radius;
+        if self.position.x < boundary_rect.left() + self.radius {
+            self.position.x = boundary_rect.right() - self.radius;
         }
-        if self.position.x > win_rect.right() - self.radius {
-            self.position.x = win_rect.left() + self.radius;
+        if self.position.x > boundary_rect.right() - self.radius {
+            self.position.x = boundary_rect.left() + self.radius;
         }
-        if self.position.y < win_rect.bottom() + self.radius {
-            self.position.y = win_rect.top() - self.radius;
+        if self.position.y < boundary_rect.bottom() + self.radius {
+            self.position.y = boundary_rect.top() - self.radius;
         }
-        if self.position.y > win_rect.top() - self.radius {
-            self.position.y = win_rect.bottom() + self.radius;
+        if self.position.y > boundary_rect.top() - self.radius {
+            self.position.y = boundary_rect.bottom() + self.radius;
         }
     }
 
@@ -107,7 +109,7 @@ impl Boid {
     }
 
     // Update the color of the boid, based on pos, vel and acc
-    fn update_color(&mut self, win_rect: Rect) {
+    fn update_color(&mut self) {
         // The lower and upper possible rgb values for the boids
         // Having them be != 0.0 or 1.0 means that there will be no fully black and no fully white
         // boids
@@ -117,21 +119,21 @@ impl Boid {
             // Map left to right
             map(
                 self.position.x,
-                win_rect.left(),
-                win_rect.right(),
+                self.boundary_rect.left(),
+                self.boundary_rect.right(),
                 lower,
                 upper,
             ),
             // Map bottom to top
             map(
                 self.position.y,
-                win_rect.bottom(),
-                win_rect.top(),
+                self.boundary_rect.bottom(),
+                self.boundary_rect.top(),
                 lower,
                 upper,
             ),
             // Map the direction of the bird
-            map(self.velocity.angle(), 0.0, f32::TAU(), lower, upper),
+            1.0,
             1.0,
         )
     }

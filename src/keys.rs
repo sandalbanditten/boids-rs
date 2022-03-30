@@ -10,6 +10,7 @@ pub fn key_pressed(app: &App, model: &mut Model, key: Key) {
                 Vec2::new(0.0, 0.0),
                 Vec2::new(random_range(-0.1, 0.1), random_range(-0.1, 0.1)),
                 Vec2::new(0.0, 0.0),
+                app.window_rect(),
             ));
             // Set the new window title
             app.main_window()
@@ -28,7 +29,7 @@ pub fn key_pressed(app: &App, model: &mut Model, key: Key) {
                     random_range(win_rect.left(), win_rect.right()),
                     random_range(win_rect.bottom(), win_rect.top()),
                 ));
-                boid.change_velocity(Vec2::new(random_range(-0.1, 0.1), random_range(-0.1, 0.1)))
+                boid.change_velocity(Vec2::new(random_range(-0.1, 1.0), random_range(-0.1, 1.0)));
             }
         }
         _ => (),
