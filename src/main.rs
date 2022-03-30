@@ -5,6 +5,7 @@ pub mod color;
 pub mod keys;
 pub mod math;
 pub mod model;
+pub mod window;
 
 fn main() {
     // Setting up the app

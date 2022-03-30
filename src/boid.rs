@@ -57,7 +57,10 @@ impl Boid {
             .rgba8(255, 255, 255, 1);
     }
 
-    pub fn flock(&mut self, flock: &Vec<Boid>) {
+    // Changed from &Vec<Boid> to &[Boid], so it also works with arrays
+    // The main flocking function - calls the three rules, and updates the boids with color and
+    // movement
+    pub fn flock(&mut self, flock: &[Boid]) {
         // The three rules
         let alignment = self.align(flock);
         let cohesion = self.cohere(flock);
@@ -100,12 +103,17 @@ impl Boid {
         }
     }
 
+    // Functions for changing attributes
     pub fn change_position(&mut self, new_position: Vec2) {
         self.position = new_position;
     }
 
     pub fn change_velocity(&mut self, new_velocity: Vec2) {
         self.velocity = new_velocity;
+    }
+
+    pub fn change_boundary(&mut self, new_boundary: Rect) {
+        self.boundary_rect = new_boundary;
     }
 
     // Update the color of the boid, based on pos, vel and acc
@@ -138,7 +146,7 @@ impl Boid {
     }
 
     // TODO: Merge the three functions, for efficiency
-    fn align(&mut self, flock: &Vec<Boid>) -> Vec2 {
+    fn align(&mut self, flock: &[Boid]) -> Vec2 {
         // Compute the average steering
         let mut steering = Vec2::ZERO;
         let mut total = 0;
@@ -163,7 +171,7 @@ impl Boid {
         steering
     }
 
-    fn cohere(&mut self, flock: &Vec<Boid>) -> Vec2 {
+    fn cohere(&mut self, flock: &[Boid]) -> Vec2 {
         // Compute the average location
         let mut steering = Vec2::ZERO;
         let mut total = 0;
@@ -190,7 +198,7 @@ impl Boid {
         steering
     }
 
-    fn separate(&mut self, flock: &Vec<Boid>) -> Vec2 {
+    fn separate(&mut self, flock: &[Boid]) -> Vec2 {
         // The final vector to steer towards
         let mut steering = Vec2::ZERO;
         let mut total = 0;
