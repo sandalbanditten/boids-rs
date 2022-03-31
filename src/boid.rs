@@ -12,37 +12,43 @@ pub struct Boid {
     max_force: f32,
     color: Color,
     diameter: f32,
-    radius: f32,
     perception_radius: f32,
     boundary_rect: Rect,
+    alignment_modifier: f32,
+    cohesion_modifier: f32,
+    separation_modifier: f32,
 }
 
 impl Boid {
+    // Constructor //
     pub fn new(position: Vec2, velocity: Vec2, acceleration: Vec2, win_rect: Rect) -> Boid {
         Boid {
             position,
-            // Sets the length of the vector to 0.1
+            // Sets the length of the vector to 0.075
             velocity: velocity.normalize().clamp_length(0.075, 0.075),
             acceleration,
             max_speed: 0.075,
             max_force: 0.0005,
             color: Color::new(1.0, 1.0, 1.0, 1.0),
             diameter: 0.3,
-            radius: 0.3 / 2.0,
             perception_radius: 2.5,
             boundary_rect: win_rect,
+            alignment_modifier: 1.0,
+            cohesion_modifier: 1.0,
+            separation_modifier: 1.0,
         }
     }
 
-    // Shows the boid to the screen
+    // For showing boids //
+    // Shows the boid to the screen, as a triangle, pointing in the same direction as the boid
     pub fn show(&self, draw: &Draw) {
         draw.tri()
             .xy(self.position)
             // A triangle pointing to the right - so it has an angle of zero degrees
             .points(
-                Point2::new(self.diameter, 0.0),
-                Point2::new(-self.diameter, -self.diameter),
-                Point2::new(-self.diameter, self.diameter),
+                Point2::new(self.diameter / 2.0, 0.0),
+                Point2::new(-self.diameter / 2.0, -self.diameter / 2.0),
+                Point2::new(-self.diameter / 2.0, self.diameter / 2.0),
             )
             .w_h(self.diameter, self.diameter)
             // Set its angle to the boids velocity
@@ -50,21 +56,24 @@ impl Boid {
             .rgba(self.color.r, self.color.g, self.color.b, self.color.a);
     }
 
+    // Draws a transparent circle at the boids position, with a diameter equal to the boids
     pub fn show_perception(&self, draw: &Draw) {
+        // perception range
         draw.ellipse()
             .w_h(self.perception_radius * 2.0, self.perception_radius * 2.0)
             .xy(self.position)
-            .rgba8(255, 255, 255, 1);
+            .rgba(1.0, 1.0, 1.0, 0.0025);
     }
 
-    // Changed from &Vec<Boid> to &[Boid], so it also works with arrays
+    // The three rules //
     // The main flocking function - calls the three rules, and updates the boids with color and
     // movement
     pub fn flock(&mut self, flock: &[Boid]) {
+        // Changed from &Vec<Boid> to &[Boid], so it also works with arrays
         // The three rules
-        let alignment = self.align(flock);
-        let cohesion = self.cohere(flock);
-        let separation = self.separate(flock);
+        let alignment = self.align(flock) * self.alignment_modifier;
+        let cohesion = self.cohere(flock) * self.cohesion_modifier;
+        let separation = self.separate(flock) * self.separation_modifier;
 
         // Updating the acceleration
         self.acceleration += alignment;
@@ -73,7 +82,7 @@ impl Boid {
 
         // Update colors based on pos, vel, and acc
         self.update_color();
-        // Update velocity and position
+        // Update velocity and position - and resetting acceleration
         self.update(self.boundary_rect);
     }
 
@@ -89,60 +98,18 @@ impl Boid {
         self.acceleration = Vec2::ZERO;
 
         // Check if stuff is inside bounds
-        if self.position.x < boundary_rect.left() + self.radius {
-            self.position.x = boundary_rect.right() - self.radius;
+        if self.position.x < boundary_rect.left() + self.diameter / 2.0 {
+            self.position.x = boundary_rect.right() - self.diameter / 2.0;
         }
-        if self.position.x > boundary_rect.right() - self.radius {
-            self.position.x = boundary_rect.left() + self.radius;
+        if self.position.x > boundary_rect.right() - self.diameter / 2.0 {
+            self.position.x = boundary_rect.left() + self.diameter / 2.0;
         }
-        if self.position.y < boundary_rect.bottom() + self.radius {
-            self.position.y = boundary_rect.top() - self.radius;
+        if self.position.y < boundary_rect.bottom() + self.diameter / 2.0 {
+            self.position.y = boundary_rect.top() - self.diameter / 2.0;
         }
-        if self.position.y > boundary_rect.top() - self.radius {
-            self.position.y = boundary_rect.bottom() + self.radius;
+        if self.position.y > boundary_rect.top() - self.diameter / 2.0 {
+            self.position.y = boundary_rect.bottom() + self.diameter / 2.0;
         }
-    }
-
-    // Functions for changing attributes
-    pub fn change_position(&mut self, new_position: Vec2) {
-        self.position = new_position;
-    }
-
-    pub fn change_velocity(&mut self, new_velocity: Vec2) {
-        self.velocity = new_velocity;
-    }
-
-    pub fn change_boundary(&mut self, new_boundary: Rect) {
-        self.boundary_rect = new_boundary;
-    }
-
-    // Update the color of the boid, based on pos, vel and acc
-    fn update_color(&mut self) {
-        // The lower and upper possible rgb values for the boids
-        // Having them be != 0.0 or 1.0 means that there will be no fully black and no fully white
-        // boids
-        let lower = 0.2;
-        let upper = 0.8;
-        self.color = Color::new(
-            // Map left to right
-            map(
-                self.position.x,
-                self.boundary_rect.left(),
-                self.boundary_rect.right(),
-                lower,
-                upper,
-            ),
-            // Map bottom to top
-            map(
-                self.position.y,
-                self.boundary_rect.bottom(),
-                self.boundary_rect.top(),
-                lower,
-                upper,
-            ),
-            1.0,
-            1.0,
-        )
     }
 
     // TODO: Merge the three functions, for efficiency
@@ -227,5 +194,121 @@ impl Boid {
             steering = steering.clamp_length_max(self.max_force);
         }
         steering
+    }
+
+    // Functions for getting attributes //
+    // Returns the perception radius of the boid
+    pub fn get_perception(&self) -> f32 {
+        self.perception_radius
+    }
+
+    // Returns the diameter of the boid
+    pub fn get_diameter(&self) -> f32 {
+        self.diameter
+    }
+
+    // Returns the max speed of the boid
+    pub fn get_max_speed(&self) -> f32 {
+        self.max_speed
+    }
+
+    // Returns the max force of the boid
+    pub fn get_max_force(&self) -> f32 {
+        self.max_force
+    }
+
+    // Returns the alignment modifier of the boid
+    pub fn get_alignment_modifier(&self) -> f32 {
+        self.alignment_modifier
+    }
+
+    // Returns the cohesion modifier of the boid
+    pub fn get_cohesion_modifier(&self) -> f32 {
+        self.cohesion_modifier
+    }
+
+    // Returns the separation modifier of the boid
+    pub fn get_separation_modifier(&self) -> f32 {
+        self.separation_modifier
+    }
+
+    // Functions for changing attributes //
+    // Change the perception of the boid
+    pub fn change_perception(&mut self, multiplier: f32) {
+        self.perception_radius *= multiplier;
+    }
+
+    // Change the size of the boid
+    pub fn change_diameter(&mut self, multiplier: f32) {
+        self.diameter *= multiplier;
+    }
+
+    // Changes the max speed of the boid
+    pub fn change_max_speed(&mut self, multiplier: f32) {
+        self.max_speed *= multiplier;
+    }
+
+    // Changes the max force of the boid
+    pub fn change_max_force(&mut self, multiplier: f32) {
+        self.max_force *= multiplier;
+    }
+
+    // Changes the alignment modifier of the boid
+    pub fn change_alignment_modifier(&mut self, multiplier: f32) {
+        self.alignment_modifier *= multiplier;
+    }
+
+    // Changes the cohesion modifier of the boid
+    pub fn change_cohesion_modifier(&mut self, multiplier: f32) {
+        self.cohesion_modifier *= multiplier;
+    }
+
+    // Changes the separation modifier of the boid
+    pub fn change_separation_modifier(&mut self, multiplier: f32) {
+        self.separation_modifier *= multiplier;
+    }
+
+    // Changes the position of the boid
+    pub fn change_position(&mut self, new_position: Vec2) {
+        self.position = new_position;
+    }
+
+    // Changes the velocity of the boid
+    pub fn change_velocity(&mut self, new_velocity: Vec2) {
+        self.velocity = new_velocity;
+    }
+
+    // Changes the boundary rectangle of the boid
+    pub fn change_boundary(&mut self, new_boundary: Rect) {
+        self.boundary_rect = new_boundary;
+    }
+
+    // Update the color of the boid, based on pos, vel and acc
+    fn update_color(&mut self) {
+        // The lower and upper possible rgb values for the boids
+        // Having them be != 0.0 or 1.0 means that there will be no fully black and no fully white
+        // boids
+        let lower = 0.2;
+        let upper = 0.8;
+        self.color = Color::new(
+            // Map left to right
+            map(
+                self.position.x,
+                self.boundary_rect.left(),
+                self.boundary_rect.right(),
+                lower,
+                upper,
+            ),
+            // Map bottom to top
+            map(
+                self.position.y,
+                self.boundary_rect.bottom(),
+                self.boundary_rect.top(),
+                lower,
+                upper,
+            ),
+            1.0,
+            1.0,
+        )
     }
 }

@@ -1,13 +1,13 @@
 use crate::boid::Boid;
-use crate::keys::{key_pressed, key_released};
+use crate::flock::Flock;
+use crate::keys::{key_pressed, key_released, Keybinds};
 use crate::view;
-use crate::window::*;
-use nannou::prelude::{random_range, App, Rect, Vec2};
+use crate::window::window_resized;
+use nannou::prelude::App;
 
 pub struct Model {
     pub flock: Vec<Boid>,
-    pub highlight_all: bool,
-    pub highlight_first: bool,
+    pub keybinds: Keybinds,
 }
 
 impl Model {
@@ -26,29 +26,15 @@ impl Model {
             .build()
             .unwrap();
 
-        let mut flock: Vec<Boid> = Vec::new();
-        let win_rect: Rect = app.window_rect();
-        for _ in 0..512 {
-            flock.push(Boid::new(
-                // Position vector
-                Vec2::new(
-                    // Random, inside the rect
-                    random_range(win_rect.left(), win_rect.right()),
-                    random_range(win_rect.bottom(), win_rect.top()),
-                ),
-                // Velocity vector - random, but changed to max_speed
-                Vec2::new(random_range(-1.0, 1.0), random_range(-1.0, 1.0)).clamp_length_max(0.075),
-                // Acceleration vector
-                Vec2::new(0.0, 0.0),
-                win_rect,
-            ));
-        }
-
         // Our model is the state of our application, which can be accesed from all functions
         Model {
-            flock,
-            highlight_all: false,
-            highlight_first: true,
+            flock: Flock::new_flock(app.window_rect()),
+            keybinds: Keybinds {
+                highlight_all: false,
+                highlight_first: false,
+                show_help_menu: true,
+                show_current_values: false,
+            },
         }
     }
 }
