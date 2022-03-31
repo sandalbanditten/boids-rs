@@ -21,12 +21,12 @@ pub struct Boid {
 
 impl Boid {
     // Constructor //
-    pub fn new(position: Vec2, velocity: Vec2, acceleration: Vec2, win_rect: Rect) -> Boid {
+    pub fn new(position: Vec2, velocity: Vec2, win_rect: Rect) -> Boid {
         Boid {
             position,
             // Sets the length of the vector to 0.075
             velocity: velocity.normalize().clamp_length(0.075, 0.075),
-            acceleration,
+            acceleration: Vec2::new(0.0, 0.0),
             max_speed: 0.075,
             max_force: 0.0005,
             color: Color::new(1.0, 1.0, 1.0, 1.0),

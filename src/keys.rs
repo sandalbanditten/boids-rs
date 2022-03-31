@@ -12,7 +12,6 @@ pub fn key_pressed(app: &App, model: &mut Model, key: Key) {
                 model.flock.push(Boid::new(
                     Vec2::new(0.0, 0.0),
                     Vec2::new(random_range(-0.1, 0.1), random_range(-0.1, 0.1)),
-                    Vec2::new(0.0, 0.0),
                     app.window_rect(),
                 ));
             } else {
@@ -146,7 +145,6 @@ pub fn key_pressed(app: &App, model: &mut Model, key: Key) {
 }
 
 pub fn key_released(_app: &App, model: &mut Model, key: Key) {
-    // An example
     match key {
         Key::S => {
             model.keybinds.highlight_all = false;
@@ -164,6 +162,7 @@ pub fn key_released(_app: &App, model: &mut Model, key: Key) {
     }
 }
 
+// The values read by functions in the draw function
 pub struct Keybinds {
     pub highlight_all: bool,
     pub highlight_first: bool,
