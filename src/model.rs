@@ -16,7 +16,6 @@ impl Model {
         // Creating the window
         let _window = app
             .new_window()
-            // TODO: Title here should reflect number of boids given with CLI args
             .title("512 boids!")
             // Functions to call at certain event
             .key_pressed(key_pressed)
@@ -28,7 +27,7 @@ impl Model {
 
         // Our model is the state of our application, which can be accesed from all functions
         Model {
-            flock: Flock::new_flock(app.window_rect()),
+            flock: Flock::new_flock(app.window_rect(), 512),
             keybinds: Keybinds {
                 highlight_all: false,
                 highlight_first: false,

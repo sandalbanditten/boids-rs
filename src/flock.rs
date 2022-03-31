@@ -4,9 +4,9 @@ use nannou::prelude::{random_range, Rect, Vec2};
 pub struct Flock;
 
 impl Flock {
-    pub fn new_flock(boundary_rect: Rect) -> Vec<Boid> {
+    pub fn new_flock(boundary_rect: Rect, flock_size: usize) -> Vec<Boid> {
         let mut flock: Vec<Boid> = Vec::new();
-        for _ in 0..512 {
+        for _ in 0..flock_size {
             flock.push(Boid::new(
                 // Position vector
                 Vec2::new(

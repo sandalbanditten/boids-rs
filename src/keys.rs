@@ -34,18 +34,34 @@ pub fn key_pressed(app: &App, model: &mut Model, key: Key) {
         }
         Key::R => {
             // Reset the boids //
-            model.flock = Flock::new_flock(app.window_rect());
+            model.flock = Flock::new_flock(app.window_rect(), model.flock.len());
         }
         Key::S => {
             model.keybinds.highlight_all = true;
         }
+        // This one does not have an equivalent in key_released
+        Key::D => {
+            model.keybinds.highlight_all = true;
+        }
+        Key::Z => {
+            model.keybinds.highlight_first = true;
+        }
+        // This one does not have an equivalent in key_released
         Key::X => {
             model.keybinds.highlight_first = true;
         }
         Key::H => {
             model.keybinds.show_help_menu = true;
         }
+        // This one does not have an equivalent in key_released
+        Key::J => {
+            model.keybinds.show_help_menu = true;
+        }
         Key::C => {
+            model.keybinds.show_current_values = true;
+        }
+        // This one does not have an equivalent in key_released
+        Key::V => {
             model.keybinds.show_current_values = true;
         }
         // The keys for modifying the boids //
@@ -135,7 +151,7 @@ pub fn key_released(_app: &App, model: &mut Model, key: Key) {
         Key::S => {
             model.keybinds.highlight_all = false;
         }
-        Key::X => {
+        Key::Z => {
             model.keybinds.highlight_first = false;
         }
         Key::H => {

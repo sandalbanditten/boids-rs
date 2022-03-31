@@ -59,6 +59,7 @@ impl Boid {
     // Draws a transparent circle at the boids position, with a diameter equal to the boids
     pub fn show_perception(&self, draw: &Draw) {
         // perception range
+        // TODO: Try something different than ellipse, as ellipse might be very expensive operation
         draw.ellipse()
             .w_h(self.perception_radius * 2.0, self.perception_radius * 2.0)
             .xy(self.position)
@@ -80,10 +81,10 @@ impl Boid {
         self.acceleration += cohesion;
         self.acceleration += separation;
 
-        // Update colors based on pos, vel, and acc
-        self.update_color();
         // Update velocity and position - and resetting acceleration
         self.update(self.boundary_rect);
+        // Update colors based on pos, vel, and acc - updating after self.update() is important
+        self.update_color();
     }
 
     // Updating the position and velocity of the boid
@@ -112,7 +113,8 @@ impl Boid {
         }
     }
 
-    // TODO: Merge the three functions, for efficiency
+    // TODO: Merge the three functions, for efficiency - if it isn't a lot more efficient just keep
+    // it three separate methods
     fn align(&mut self, flock: &[Boid]) -> Vec2 {
         // Compute the average steering
         let mut steering = Vec2::ZERO;
@@ -288,8 +290,12 @@ impl Boid {
         // The lower and upper possible rgb values for the boids
         // Having them be != 0.0 or 1.0 means that there will be no fully black and no fully white
         // boids
-        let lower = 0.2;
-        let upper = 0.8;
+        let lower: f32 = 0.2;
+        let upper: f32 = 0.8;
+        // Color functions takes in a number in range 0.0..=1.0
+        let lower = lower.clamp(0.0, 1.0);
+        let upper = upper.clamp(0.0, 1.0);
+        // Change the color
         self.color = Color::new(
             // Map left to right
             map(

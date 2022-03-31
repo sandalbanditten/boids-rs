@@ -34,6 +34,21 @@ fn view(app: &App, model: &Model, frame: Frame) {
     // Draw background
     draw.background().rgb(0.1569, 0.1569, 0.1569);
 
+    // Only highlight the first boid, if it exists
+    if model.keybinds.highlight_first {
+        if let Some(boid) = model.flock.first() {
+            boid.show_perception(&draw)
+        }
+    }
+
+    // Show all the boids
+    for boid in &model.flock {
+        boid.show(&draw);
+        if model.keybinds.highlight_all {
+            boid.show_perception(&draw);
+        }
+    }
+
     // Draw the help menu
     if model.keybinds.show_help_menu {
         show_help_menu(&draw, win_rect);
@@ -42,21 +57,6 @@ fn view(app: &App, model: &Model, frame: Frame) {
     // Draw the current values
     if model.keybinds.show_current_values {
         show_current_values(&draw, win_rect, model);
-    }
-
-    // Only highlight the first boid, if it exists
-    if model.keybinds.highlight_first {
-        if let Some(boid) = model.flock.first() {
-            boid.show_perception(&draw)
-        }
-    }
-
-    // Show all the boids - on top of the text
-    for boid in &model.flock {
-        boid.show(&draw);
-        if model.keybinds.highlight_all {
-            boid.show_perception(&draw);
-        }
     }
 
     // Push stuff to screen

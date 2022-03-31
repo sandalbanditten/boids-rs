@@ -4,11 +4,15 @@ use nannou::prelude::{text, Draw, Rect};
 pub fn show_help_menu(draw: &Draw, win_rect: Rect) {
     draw.text(
         " Keybinds:
-  R - reset the simulation
-  C - show the current values
-  S - highlight perception range of all boids
-  X - highlight perception range of one boids
   H - show this help menu
+  J - sticky the help menu
+  C - show the current values
+  V - sticky the current values
+  S - highlight perception range of all boids
+  D - sticky highlight perception range of all boids
+  Z - highlight perception range of one boid
+  X - sticky highlight perception range of one boid
+  R - reset the simulation
   - - remove a boid
   + - add a boid
   [ - decrease perception range
@@ -36,23 +40,19 @@ pub fn show_help_menu(draw: &Draw, win_rect: Rect) {
 }
 
 pub fn show_current_values(draw: &Draw, win_rect: Rect, model: &Model) {
+    let text: String;
     if model.flock.is_empty() {
-        draw.text(
+        text = String::from(
             " Current values:
   There are no boids :(
             ",
-        )
-        .xy(win_rect.bottom_left())
-        .w_h(0.0, 0.0)
-        .no_line_wrap()
-        .justify(text::Justify::Left)
-        .align_text_bottom()
-        .font_size(1)
-        .rgba(1.0, 1.0, 1.0, 1.0);
+        );
     } else {
-        draw.text(
-            format!(
-                " Current values:
+        // Only using unwrap here, because the above if statement makes sure there will never
+        // be None as flock.first()
+        let first = model.flock.first().unwrap();
+        text = String::from(format!(
+            " Current values:
   Number of boids: {}
   Perception range: {}
   Diameter of boids: {}
@@ -61,19 +61,18 @@ pub fn show_current_values(draw: &Draw, win_rect: Rect, model: &Model) {
   Alignment modifier: {}
   Cohesion modifier: {}
   Separation modifier: {}",
-                // Only using unwrap here, because the above if statement makes sure there will never
-                // be None as flock.first()
-                model.flock.len(),
-                model.flock.first().unwrap().get_perception(),
-                model.flock.first().unwrap().get_diameter(),
-                model.flock.first().unwrap().get_max_speed(),
-                model.flock.first().unwrap().get_max_force(),
-                model.flock.first().unwrap().get_alignment_modifier(),
-                model.flock.first().unwrap().get_cohesion_modifier(),
-                model.flock.first().unwrap().get_separation_modifier(),
-            )
-            .as_str(),
-        )
+            // The values to be put into the string
+            model.flock.len(),
+            first.get_perception(),
+            first.get_diameter(),
+            first.get_max_speed(),
+            first.get_max_force(),
+            first.get_alignment_modifier(),
+            first.get_cohesion_modifier(),
+            first.get_separation_modifier(),
+        ));
+    };
+    draw.text(text.as_str())
         .x_y(win_rect.left(), win_rect.bottom() + 0.5)
         .w_h(0.0, 0.0)
         .no_line_wrap()
@@ -81,5 +80,4 @@ pub fn show_current_values(draw: &Draw, win_rect: Rect, model: &Model) {
         .align_text_bottom()
         .font_size(1)
         .rgba(1.0, 1.0, 1.0, 1.0);
-    };
 }
