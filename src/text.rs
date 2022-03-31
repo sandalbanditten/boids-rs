@@ -36,7 +36,7 @@ pub fn show_help_menu(draw: &Draw, win_rect: Rect) {
     .justify(text::Justify::Left)
     .align_text_top()
     .font_size(1)
-    .rgba(1.0, 1.0, 1.0, 1.0);
+    .rgba(1.0, 1.0, 1.0, 0.5);
 }
 
 pub fn show_current_values(draw: &Draw, win_rect: Rect, model: &Model) {
@@ -79,5 +79,5 @@ pub fn show_current_values(draw: &Draw, win_rect: Rect, model: &Model) {
         .justify(text::Justify::Left)
         .align_text_bottom()
         .font_size(1)
-        .rgba(1.0, 1.0, 1.0, 1.0);
+        .rgba(1.0, 1.0, 1.0, 0.5);
 }
