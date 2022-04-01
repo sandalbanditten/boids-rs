@@ -36,7 +36,7 @@ fn view(app: &App, model: &Model, frame: Frame) {
     // Only highlight the first boid, if it exists
     if model.keybinds.highlight_first {
         if let Some(boid) = model.flock.first() {
-            boid.show_perception(&draw)
+            boid.show_perception(&draw, 0.025)
         }
     }
 
@@ -44,7 +44,7 @@ fn view(app: &App, model: &Model, frame: Frame) {
     for boid in &model.flock {
         boid.show(&draw);
         if model.keybinds.highlight_all {
-            boid.show_perception(&draw);
+            boid.show_perception(&draw, 0.0025);
         }
     }
 

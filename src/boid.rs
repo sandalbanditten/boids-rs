@@ -55,13 +55,14 @@ impl Boid {
     }
 
     // Draws a transparent circle at the boids position, with a diameter equal to the boids
-    pub fn show_perception(&self, draw: &Draw) {
+    pub fn show_perception(&self, draw: &Draw, mut alpha: f32) {
         // perception range
+        alpha = alpha.clamp(0.0, 1.0);
         // TODO: Try something different than ellipse, as ellipse might be very expensive operation
         draw.ellipse()
             .w_h(self.perception_radius * 2.0, self.perception_radius * 2.0)
             .xy(self.position)
-            .rgba(1.0, 1.0, 1.0, 0.0025);
+            .rgba(1.0, 1.0, 1.0, alpha);
     }
 
     // The three rules //
@@ -289,8 +290,18 @@ impl Boid {
         let lower = lower.clamp(0.0, 1.0);
         let upper = upper.clamp(0.0, 1.0);
         // Change the color
+        // R - velocity
+        // G - X-position
+        // B - Y-position
         self.color = Color::new(
             // Map left to right
+            map(
+                self.velocity.length(),
+                0.0,
+                self.get_max_speed(),
+                lower,
+                upper,
+            ),
             map(
                 self.position.x,
                 win_rect.left(),
@@ -306,7 +317,6 @@ impl Boid {
                 lower,
                 upper,
             ),
-            1.0,
             1.0,
         )
     }
