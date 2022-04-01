@@ -33,6 +33,7 @@ pub fn key_pressed(app: &App, model: &mut Model, key: Key) {
         Key::R => {
             // Reset the boids //
             model.flock = Flock::new_flock(app.window_rect(), model.flock.len());
+            model.keybinds.any_is_pressed = true;
         }
         Key::T => {
             for boid in &mut model.flock {
@@ -47,36 +48,36 @@ pub fn key_pressed(app: &App, model: &mut Model, key: Key) {
             model.keybinds.highlight_all = true;
         }
         Key::D => {
-            if !model.keybinds.highlight_all_is_pressed {
+            if !model.keybinds.any_is_pressed {
                 model.keybinds.highlight_all = !model.keybinds.highlight_all;
-                model.keybinds.highlight_all_is_pressed = true;
+                model.keybinds.any_is_pressed = true;
             }
         }
         Key::Z => {
             model.keybinds.highlight_first = true;
         }
         Key::X => {
-            if !model.keybinds.highlight_first_is_pressed {
+            if !model.keybinds.any_is_pressed {
                 model.keybinds.highlight_first = !model.keybinds.highlight_first;
-                model.keybinds.highlight_first_is_pressed = true;
+                model.keybinds.any_is_pressed = true;
             }
         }
         Key::H => {
             model.keybinds.show_help_menu = true;
         }
         Key::J => {
-            if !model.keybinds.show_help_menu_is_pressed {
+            if !model.keybinds.any_is_pressed {
                 model.keybinds.show_help_menu = !model.keybinds.show_help_menu;
-                model.keybinds.show_help_menu_is_pressed = true;
+                model.keybinds.any_is_pressed = true;
             }
         }
         Key::C => {
             model.keybinds.show_current_values = true;
         }
         Key::V => {
-            if !model.keybinds.show_current_values_is_pressed {
+            if !model.keybinds.any_is_pressed {
                 model.keybinds.show_current_values = !model.keybinds.show_current_values;
-                model.keybinds.show_current_values_is_pressed = true;
+                model.keybinds.any_is_pressed = true;
             }
         }
         // The keys for modifying the boids //
@@ -165,28 +166,18 @@ pub fn key_released(_app: &App, model: &mut Model, key: Key) {
         Key::S => {
             model.keybinds.highlight_all = false;
         }
-        Key::D => {
-            model.keybinds.highlight_all_is_pressed = false;
-        }
         Key::Z => {
             model.keybinds.highlight_first = false;
-        }
-        Key::X => {
-            model.keybinds.highlight_first_is_pressed = false;
         }
         Key::H => {
             model.keybinds.show_help_menu = false;
         }
-        Key::J => {
-            model.keybinds.show_help_menu_is_pressed = false;
-        }
         Key::C => {
             model.keybinds.show_current_values = false;
         }
-        Key::V => {
-            model.keybinds.show_current_values_is_pressed = false;
+        _ => {
+            model.keybinds.any_is_pressed = false;
         }
-        _ => (),
     }
 }
 
@@ -196,12 +187,8 @@ pub struct Keybinds {
     pub highlight_first: bool,
     pub show_help_menu: bool,
     pub show_current_values: bool,
-    // The is_presseds are for preventing the behavior that holding down a key will repeatedly show and
-    // hide the text
-    pub highlight_all_is_pressed: bool,
-    pub highlight_first_is_pressed: bool,
-    pub show_help_menu_is_pressed: bool,
-    pub show_current_values_is_pressed: bool,
+    // The is_pressed is for preventing the behavior that holding down a key repeatedly creates
+    pub any_is_pressed: bool,
 }
 
 impl Keybinds {
@@ -211,10 +198,7 @@ impl Keybinds {
             highlight_first: false,
             show_help_menu: true,
             show_current_values: false,
-            highlight_all_is_pressed: false,
-            highlight_first_is_pressed: false,
-            show_help_menu_is_pressed: false,
-            show_current_values_is_pressed: false,
+            any_is_pressed: false,
         }
     }
 }
