@@ -12,7 +12,6 @@ pub fn key_pressed(app: &App, model: &mut Model, key: Key) {
                 model.flock.push(Boid::new(
                     Vec2::new(0.0, 0.0),
                     Vec2::new(random_range(-0.1, 0.1), random_range(-0.1, 0.1)),
-                    app.window_rect(),
                 ));
             } else {
                 let mut new_boid = model.flock.first().cloned().unwrap();

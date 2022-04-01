@@ -4,10 +4,12 @@ use crate::keys::{key_pressed, key_released, Keybinds};
 use crate::view;
 use crate::window::window_resized;
 use nannou::prelude::App;
+use nannou::prelude::Rect;
 
 pub struct Model {
     pub flock: Vec<Boid>,
     pub keybinds: Keybinds,
+    pub win_rect: Rect,
 }
 
 impl Model {
@@ -38,6 +40,7 @@ impl Model {
                 show_help_menu_is_pressed: false,
                 show_current_values_is_pressed: false,
             },
+            win_rect: app.window_rect(),
         }
     }
 }

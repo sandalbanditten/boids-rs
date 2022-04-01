@@ -13,7 +13,6 @@ pub struct Boid {
     color: Color,
     diameter: f32,
     perception_radius: f32,
-    boundary_rect: Rect,
     alignment_modifier: f32,
     cohesion_modifier: f32,
     separation_modifier: f32,
@@ -21,7 +20,7 @@ pub struct Boid {
 
 impl Boid {
     // Constructor //
-    pub fn new(position: Vec2, velocity: Vec2, win_rect: Rect) -> Boid {
+    pub fn new(position: Vec2, velocity: Vec2) -> Boid {
         Boid {
             position,
             // Sets the length of the vector to 0.075
@@ -32,7 +31,6 @@ impl Boid {
             color: Color::new(1.0, 1.0, 1.0, 1.0),
             diameter: 0.3,
             perception_radius: 2.5,
-            boundary_rect: win_rect,
             alignment_modifier: 1.0,
             cohesion_modifier: 1.0,
             separation_modifier: 1.0,
@@ -69,7 +67,7 @@ impl Boid {
     // The three rules //
     // The main flocking function - calls the three rules, and updates the boids with color and
     // movement
-    pub fn flock(&mut self, flock: &[Boid]) {
+    pub fn flock(&mut self, flock: &[Boid], win_rect: Rect) {
         // Changed from &Vec<Boid> to &[Boid], so it also works with arrays
         // The three rules
         // TODO: Concurrency?
@@ -83,9 +81,9 @@ impl Boid {
         self.acceleration += separation;
 
         // Update velocity and position - and resetting acceleration
-        self.update(self.boundary_rect);
+        self.update(win_rect);
         // Update colors based on pos, vel, and acc - updating after self.update() is important
-        self.update_color();
+        self.update_color(win_rect);
     }
 
     // Updating the position and velocity of the boid
@@ -281,13 +279,8 @@ impl Boid {
         self.velocity = new_velocity;
     }
 
-    // Changes the boundary rectangle of the boid
-    pub fn change_boundary(&mut self, new_boundary: Rect) {
-        self.boundary_rect = new_boundary;
-    }
-
     // Update the color of the boid, based on pos, vel and acc
-    fn update_color(&mut self) {
+    fn update_color(&mut self, win_rect: Rect) {
         // The lower and upper possible rgb values for the boids
         // Having them be != 0.0 or 1.0 means that there will be no fully black and no fully white
         // boids
@@ -301,16 +294,16 @@ impl Boid {
             // Map left to right
             map(
                 self.position.x,
-                self.boundary_rect.left(),
-                self.boundary_rect.right(),
+                win_rect.left(),
+                win_rect.right(),
                 lower,
                 upper,
             ),
             // Map bottom to top
             map(
                 self.position.y,
-                self.boundary_rect.bottom(),
-                self.boundary_rect.top(),
+                win_rect.bottom(),
+                win_rect.top(),
                 lower,
                 upper,
             ),

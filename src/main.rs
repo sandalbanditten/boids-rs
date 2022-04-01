@@ -20,7 +20,7 @@ fn update(_app: &App, model: &mut Model, _update: Update) {
     // TODO: Still pretty bad
     let mut temp_flock = model.flock.clone();
     for boid in &mut temp_flock {
-        boid.flock(&model.flock);
+        boid.flock(&model.flock, model.win_rect);
     }
     model.flock = temp_flock;
 }
@@ -29,7 +29,6 @@ fn update(_app: &App, model: &mut Model, _update: Update) {
 fn view(app: &App, model: &Model, frame: Frame) {
     // Allows us to draw
     let draw = app.draw();
-    let win_rect = app.window_rect();
 
     // Draw background
     draw.background().rgb(0.1569, 0.1569, 0.1569);
@@ -51,12 +50,12 @@ fn view(app: &App, model: &Model, frame: Frame) {
 
     // Draw the help menu
     if model.keybinds.show_help_menu {
-        show_help_menu(&draw, win_rect);
+        show_help_menu(&draw, model.win_rect);
     }
 
     // Draw the current values
     if model.keybinds.show_current_values {
-        show_current_values(&draw, win_rect, model);
+        show_current_values(&draw, model.win_rect, model);
     }
 
     // Push stuff to screen

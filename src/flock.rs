@@ -16,7 +16,6 @@ impl Flock {
                 ),
                 // Velocity vector - random, but clamped to max_speed
                 Vec2::new(random_range(-1.0, 1.0), random_range(-1.0, 1.0)).clamp_length_max(0.075),
-                boundary_rect,
             ));
         }
         flock
