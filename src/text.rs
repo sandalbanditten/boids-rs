@@ -40,18 +40,17 @@ pub fn show_help_menu(draw: &Draw, win_rect: Rect) {
 }
 
 pub fn show_current_values(draw: &Draw, win_rect: Rect, model: &Model) {
-    let text: String;
-    if model.flock.is_empty() {
-        text = String::from(
+    let text: String = if model.flock.is_empty() {
+        String::from(
             " Current values:
   There are no boids :(
             ",
-        );
+        )
     } else {
         // Only using unwrap here, because the above if statement makes sure there will never
         // be None as flock.first()
         let first = model.flock.first().unwrap();
-        text = String::from(format!(
+        format!(
             " Current values:
   Number of boids: {}
   Perception range: {}
@@ -70,7 +69,7 @@ pub fn show_current_values(draw: &Draw, win_rect: Rect, model: &Model) {
             first.get_alignment_modifier(),
             first.get_cohesion_modifier(),
             first.get_separation_modifier(),
-        ));
+        )
     };
     draw.text(text.as_str())
         .x_y(win_rect.left(), win_rect.bottom() + 0.5)
