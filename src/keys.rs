@@ -35,7 +35,6 @@ pub fn key_pressed(app: &App, model: &mut Model, key: Key) {
             if !model.keybinds.any_is_pressed {
                 model.flock = Flock::new_flock(app.window_rect(), model.flock.len());
                 model.keybinds.any_is_pressed = true;
-                model.keybinds.any_is_pressed = true;
             }
         }
         Key::T => {
