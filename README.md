@@ -11,19 +11,26 @@ TODO: Add a demonstration GIF
 * Keyboard controls
 * Dynamically changing behavior
 * Cross platform
-* Very fast - quadtree optimisation **TBA**
+
+## Version
+
+This is version 0.1.0.
+
+Version 0.2.0 will add quadtree subdivision.
+
+No more major versions are planned beyond these two.
 
 ## Contributing
 
 If you see possiblities for bugfixes, optimizations, new features or any other ways to improve, please do!
 
-## Installation
-
-Run `cargo install boids-rs`
-
 ## Usage
 
 Run `boids-rs`
+
+## Installation
+
+Run `cargo install boids-rs`
 
 ## License
 
