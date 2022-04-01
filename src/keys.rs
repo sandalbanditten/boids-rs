@@ -38,30 +38,38 @@ pub fn key_pressed(app: &App, model: &mut Model, key: Key) {
         Key::S => {
             model.keybinds.highlight_all = true;
         }
-        // This one does not have an equivalent in key_released
         Key::D => {
-            model.keybinds.highlight_all = true;
+            if !model.keybinds.highlight_all_is_pressed {
+                model.keybinds.highlight_all = !model.keybinds.highlight_all;
+                model.keybinds.highlight_all_is_pressed = true;
+            }
         }
         Key::Z => {
             model.keybinds.highlight_first = true;
         }
-        // This one does not have an equivalent in key_released
         Key::X => {
-            model.keybinds.highlight_first = true;
+            if !model.keybinds.highlight_first_is_pressed {
+                model.keybinds.highlight_first = !model.keybinds.highlight_first;
+                model.keybinds.highlight_first_is_pressed = true;
+            }
         }
         Key::H => {
             model.keybinds.show_help_menu = true;
         }
-        // This one does not have an equivalent in key_released
         Key::J => {
-            model.keybinds.show_help_menu = true;
+            if !model.keybinds.show_help_menu_is_pressed {
+                model.keybinds.show_help_menu = !model.keybinds.show_help_menu;
+                model.keybinds.show_help_menu_is_pressed = true;
+            }
         }
         Key::C => {
             model.keybinds.show_current_values = true;
         }
-        // This one does not have an equivalent in key_released
         Key::V => {
-            model.keybinds.show_current_values = true;
+            if !model.keybinds.show_current_values_is_pressed {
+                model.keybinds.show_current_values = !model.keybinds.show_current_values;
+                model.keybinds.show_current_values_is_pressed = true;
+            }
         }
         // The keys for modifying the boids //
         // Perception range
@@ -149,14 +157,26 @@ pub fn key_released(_app: &App, model: &mut Model, key: Key) {
         Key::S => {
             model.keybinds.highlight_all = false;
         }
+        Key::D => {
+            model.keybinds.highlight_all_is_pressed = false;
+        }
         Key::Z => {
             model.keybinds.highlight_first = false;
+        }
+        Key::X => {
+            model.keybinds.highlight_first_is_pressed = false;
         }
         Key::H => {
             model.keybinds.show_help_menu = false;
         }
+        Key::J => {
+            model.keybinds.show_help_menu_is_pressed = false;
+        }
         Key::C => {
             model.keybinds.show_current_values = false;
+        }
+        Key::V => {
+            model.keybinds.show_current_values_is_pressed = false;
         }
         _ => (),
     }
@@ -168,4 +188,10 @@ pub struct Keybinds {
     pub highlight_first: bool,
     pub show_help_menu: bool,
     pub show_current_values: bool,
+    // The is_presseds are for preventing the behavior that holding down a key will repeatedly show and
+    // hide the text
+    pub highlight_all_is_pressed: bool,
+    pub highlight_first_is_pressed: bool,
+    pub show_help_menu_is_pressed: bool,
+    pub show_current_values_is_pressed: bool,
 }

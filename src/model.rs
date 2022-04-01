@@ -33,6 +33,10 @@ impl Model {
                 highlight_first: false,
                 show_help_menu: true,
                 show_current_values: false,
+                highlight_all_is_pressed: false,
+                highlight_first_is_pressed: false,
+                show_help_menu_is_pressed: false,
+                show_current_values_is_pressed: false,
             },
         }
     }
