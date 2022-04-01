@@ -52,15 +52,15 @@ pub fn show_current_values(draw: &Draw, win_rect: Rect, model: &Model) {
         // be None as flock.first()
         let first = model.flock.first().unwrap();
         format!(
-            " Current values:
-  Number of boids: {}
-  Perception range: {}
-  Diameter of boids: {}
-  Max speed: {}
-  Max force: {}
-  Alignment modifier: {}
-  Cohesion modifier: {}
-  Separation modifier: {}",
+            "Current values:
+Number of boids: {}
+Perception range: {}
+Diameter of boids: {}
+Max speed: {}
+Max force: {}
+Alignment modifier: {}
+Cohesion modifier: {}
+Separation modifier: {}",
             // The values to be put into the string
             model.flock.len(),
             first.get_perception(),
@@ -73,10 +73,10 @@ pub fn show_current_values(draw: &Draw, win_rect: Rect, model: &Model) {
         )
     };
     draw.text(text.as_str())
-        .x_y(win_rect.left(), win_rect.bottom() + 0.5)
+        .x_y(win_rect.right() - 0.5, win_rect.bottom() + 0.5)
         .w_h(0.0, 0.0)
         .no_line_wrap()
-        .justify(text::Justify::Left)
+        .justify(text::Justify::Right)
         .align_text_bottom()
         .font_size(1)
         .rgba(1.0, 1.0, 1.0, 0.5);
