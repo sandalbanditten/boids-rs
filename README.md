@@ -4,6 +4,8 @@ A simple flocking simulation written in rust, using [nannou](https://nannou.cc/)
 
 The three basic rules for flocking come from [here](https://www.red3d.com/cwr/boids/).
 
+TODO: Add a demonstration GIF
+
 ## Features
 
 * Keyboard controls
