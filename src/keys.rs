@@ -34,6 +34,15 @@ pub fn key_pressed(app: &App, model: &mut Model, key: Key) {
             // Reset the boids //
             model.flock = Flock::new_flock(app.window_rect(), model.flock.len());
         }
+        Key::T => {
+            for boid in &mut model.flock {
+                boid.change_position(Vec2::new(
+                    random_range(model.win_rect.left(), model.win_rect.right()),
+                    random_range(model.win_rect.bottom(), model.win_rect.top()),
+                ));
+                boid.change_velocity(Vec2::new(random_range(-0.1, 0.1), random_range(-0.1, 0.1)));
+            }
+        }
         Key::S => {
             model.keybinds.highlight_all = true;
         }
