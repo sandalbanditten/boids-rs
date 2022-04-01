@@ -70,7 +70,6 @@ impl Boid {
     pub fn flock(&mut self, flock: &[Boid], win_rect: Rect) {
         // Changed from &Vec<Boid> to &[Boid], so it also works with arrays
         // The three rules
-        // TODO: Concurrency?
         let alignment = self.align(flock) * self.alignment_modifier;
         let cohesion = self.cohere(flock) * self.cohesion_modifier;
         let separation = self.separate(flock) * self.separation_modifier;

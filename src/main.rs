@@ -1,6 +1,6 @@
 use crate::model::Model;
 use crate::text::{show_current_values, show_help_menu};
-use nannou::prelude::*;
+use nannou::prelude::{App, Frame, Update};
 mod boid;
 mod color;
 mod flock;

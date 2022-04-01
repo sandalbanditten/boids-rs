@@ -3,8 +3,7 @@ use crate::flock::Flock;
 use crate::keys::{key_pressed, key_released, Keybinds};
 use crate::view;
 use crate::window::window_resized;
-use nannou::prelude::App;
-use nannou::prelude::Rect;
+use nannou::prelude::{App, Rect};
 
 pub struct Model {
     pub flock: Vec<Boid>,
@@ -27,20 +26,14 @@ impl Model {
             .build()
             .unwrap();
 
+        // The window rect
+        let win_rect = app.window_rect();
+
         // Our model is the state of our application, which can be accesed from all functions
         Model {
-            flock: Flock::new_flock(app.window_rect(), 512),
-            keybinds: Keybinds {
-                highlight_all: false,
-                highlight_first: false,
-                show_help_menu: true,
-                show_current_values: false,
-                highlight_all_is_pressed: false,
-                highlight_first_is_pressed: false,
-                show_help_menu_is_pressed: false,
-                show_current_values_is_pressed: false,
-            },
-            win_rect: app.window_rect(),
+            flock: Flock::new_flock(win_rect, 1024),
+            keybinds: Keybinds::new(),
+            win_rect,
         }
     }
 }

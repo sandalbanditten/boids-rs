@@ -11,7 +11,7 @@ TODO: Add a demonstration GIF
 * Keyboard controls
 * Dynamically changing behavior
 * Cross platform
-* Very fast - quadtree optimisation **TBA** and multithreading **TBA**
+* Very fast - quadtree optimisation **TBA**
 
 ## Contributing
 
