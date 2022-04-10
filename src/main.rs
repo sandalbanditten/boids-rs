@@ -17,7 +17,7 @@ fn main() {
 
 // Update the state of our application every frame
 fn update(_app: &App, model: &mut Model, _update: Update) {
-    // TODO: Still pretty bad
+    // TODO: Still pretty bad - .clone() is very expensive
     let mut temp_flock = model.flock.clone();
     for boid in &mut temp_flock {
         boid.flock(&model.flock, model.win_rect);
@@ -59,5 +59,5 @@ fn view(app: &App, model: &Model, frame: Frame) {
     }
 
     // Push stuff to screen
-    draw.to_frame(app, &frame).unwrap();
+    draw.to_frame(app, &frame).expect("Unable to draw to the frame");
 }
