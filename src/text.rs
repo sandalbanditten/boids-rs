@@ -3,7 +3,8 @@ use nannou::prelude::{text, Draw, Rect};
 
 pub fn show_help_menu(draw: &Draw, win_rect: Rect) {
     draw.text(
-        " Keybinds:
+        "\
+ Keybinds:
   H - show this help menu
   J - sticky the help menu
   C - show the current values
@@ -43,7 +44,8 @@ pub fn show_help_menu(draw: &Draw, win_rect: Rect) {
 pub fn show_current_values(draw: &Draw, win_rect: Rect, model: &Model) {
     let text: String = if model.flock.is_empty() {
         String::from(
-            " Current values:
+            "\
+ Current values:
   There are no boids :(
             ",
         )
@@ -52,7 +54,8 @@ pub fn show_current_values(draw: &Draw, win_rect: Rect, model: &Model) {
         // be None as flock.first()
         let first = model.flock.first().unwrap();
         format!(
-            "Current values:
+            "\
+Current values:
 Number of boids: {}
 Perception range: {}
 Diameter of boids: {}
