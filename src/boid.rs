@@ -286,15 +286,11 @@ impl Boid {
         // boids
         let lower: f32 = 0.2;
         let upper: f32 = 0.8;
-        // Color functions takes in a number in range 0.0..=1.0
-        let lower = lower.clamp(0.0, 1.0);
-        let upper = upper.clamp(0.0, 1.0);
         // Change the color
         // R - velocity
         // G - X-position
         // B - Y-position
         self.color = Color::new(
-            // Map left to right
             map(
                 self.velocity.length(),
                 0.0,
@@ -302,6 +298,7 @@ impl Boid {
                 lower,
                 upper,
             ),
+            // Map left to right
             map(
                 self.position.x,
                 win_rect.left(),

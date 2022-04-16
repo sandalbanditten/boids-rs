@@ -18,7 +18,7 @@ impl Model {
         // Creating the window
         let _window = app
             .new_window()
-            .title("512 boids!")
+            .title("1024 boids!")
             // Functions to call at certain event
             .key_pressed(key_pressed)
             .key_released(key_released)
