@@ -46,5 +46,6 @@ pub fn view(app: &App, model: &Model, frame: Frame) {
     }
 
     // Push stuff to screen
-    draw.to_frame(app, &frame).expect("Unable to draw to the frame");
+    draw.to_frame(app, &frame)
+        .expect("Unable to draw to the frame");
 }
