@@ -14,7 +14,7 @@ pub fn show_help_menu(draw: &Draw, win_rect: Rect) {
   Z - highlight perception range of one boid
   X - sticky highlight perception range of one boid
   R - reset the simulation
-  T - reset the boids velocity and position, but nothing else
+  T - reset the position, velocity and acceleration, but nothing else
   - - remove a boid
   + - add a boid
   [ - decrease perception range
