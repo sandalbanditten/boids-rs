@@ -1,6 +1,6 @@
 use crate::color::Color;
 use crate::math::map;
-use nannou::prelude::{Draw, Point2, Rect, Vec2, Vec2Angle};
+use nannou::prelude::{random_range, Draw, Point2, Rect, Vec2, Vec2Angle};
 
 // So we can compare boids using ==
 #[derive(PartialEq, Clone)]
@@ -316,5 +316,24 @@ impl Boid {
             ),
             1.0,
         )
+    }
+}
+
+// The default implementation for boids - the middle of the screen etc.
+impl Default for Boid {
+    fn default() -> Self {
+        Boid {
+            position: Vec2::new(0.0, 0.0),
+            velocity: Vec2::new(random_range(-0.1, 0.1), random_range(-0.1, 0.1)),
+            acceleration: Vec2::new(0.0, 0.0),
+            max_speed: 0.075,
+            max_force: 0.0005,
+            color: Color::new(1.0, 1.0, 1.0, 1.0),
+            diameter: 0.3,
+            perception_radius: 2.5,
+            alignment_modifier: 1.0,
+            cohesion_modifier: 1.0,
+            separation_modifier: 1.0,
+        }
     }
 }
