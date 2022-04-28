@@ -1,6 +1,5 @@
 use crate::model::Model;
 use crate::update::{update, view};
-use std::error::Error;
 mod boid;
 mod color;
 mod flock;
@@ -11,9 +10,7 @@ mod text;
 mod update;
 mod window;
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() {
     // Setting up the app
     nannou::app(Model::new).update(update).run();
-
-    Ok(())
 }
