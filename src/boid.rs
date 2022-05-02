@@ -12,7 +12,9 @@ pub struct Boid {
     max_force: f32,
     color: Color,
     diameter: f32,
+    // How far the boid can "see"
     perception_radius: f32,
+    // These three modifiers get applied to the alignment etc. to scale it
     alignment_modifier: f32,
     cohesion_modifier: f32,
     separation_modifier: f32,
@@ -20,20 +22,13 @@ pub struct Boid {
 
 impl Boid {
     // Constructor //
-    pub fn new(position: Vec2, velocity: Vec2) -> Boid {
+    pub fn new(position: Vec2, velocity: Vec2) -> Self {
         Boid {
             position,
             // Sets the length of the vector to 0.075
             velocity: velocity.normalize().clamp_length(0.075, 0.075),
-            acceleration: Vec2::new(0.0, 0.0),
-            max_speed: 0.075,
-            max_force: 0.0005,
-            color: Color::new(1.0, 1.0, 1.0, 1.0),
-            diameter: 0.3,
-            perception_radius: 2.5,
-            alignment_modifier: 1.0,
-            cohesion_modifier: 1.0,
-            separation_modifier: 1.0,
+            // Use the default implementation for the rest of the boid
+            ..Default::default()
         }
     }
 
@@ -43,22 +38,28 @@ impl Boid {
         draw.tri()
             .xy(self.position)
             // A triangle pointing to the right - so it has an angle of zero degrees
+            // Basically looks like this:
+            /*
+             *     *
+             *         *
+             *     *
+             */
             .points(
                 Point2::new(self.diameter / 2.0, 0.0),
                 Point2::new(-self.diameter / 2.0, -self.diameter / 2.0),
                 Point2::new(-self.diameter / 2.0, self.diameter / 2.0),
             )
             .w_h(self.diameter, self.diameter)
-            // Set its angle to the boids velocity
+            // Set its angle to the boids velocity angle - where the boid is facing
             .rotate(self.velocity.angle())
             .rgba(self.color.r, self.color.g, self.color.b, self.color.a);
     }
 
-    // Draws a transparent circle at the boids position, with a diameter equal to the boids
+    // Draws a transparent circle at the boids position, with a radius equal to the boids
+    // perception_radius
     pub fn show_perception(&self, draw: &Draw, mut alpha: f32) {
-        // perception range
+        // making sure the alpha is between 0.0 and 1.0 - this might happen internally in the function, though this is not discernable from the source code
         alpha = alpha.clamp(0.0, 1.0);
-        // TODO: Try something different than ellipse, as ellipse might be very expensive operation
         draw.ellipse()
             .w_h(self.perception_radius * 2.0, self.perception_radius * 2.0)
             .xy(self.position)
@@ -69,7 +70,7 @@ impl Boid {
     // The main flocking function - calls the three rules, and updates the boids with color and
     // movement
     pub fn flock(&mut self, flock: &[Boid], win_rect: Rect) {
-        // Changed from &Vec<Boid> to &[Boid], so it also works with arrays
+        // Changed from &Vec<Boid> to &[Boid], from vector type to slice type
         // The three rules
         let alignment = self.align(flock) * self.alignment_modifier;
         let cohesion = self.cohere(flock) * self.cohesion_modifier;
@@ -112,9 +113,8 @@ impl Boid {
         }
     }
 
-    // TODO: Merge the three functions, for efficiency - if it isn't a lot more efficient just keep
-    // it three separate methods
-    fn align(&mut self, flock: &[Boid]) -> Vec2 {
+    // The three separate methods for the three rules
+    fn align(&self, flock: &[Boid]) -> Vec2 {
         // Compute the average steering
         let mut steering = Vec2::ZERO;
         let mut total = 0;
@@ -139,7 +139,7 @@ impl Boid {
         steering
     }
 
-    fn cohere(&mut self, flock: &[Boid]) -> Vec2 {
+    fn cohere(&self, flock: &[Boid]) -> Vec2 {
         // Compute the average location
         let mut steering = Vec2::ZERO;
         let mut total = 0;
@@ -166,7 +166,7 @@ impl Boid {
         steering
     }
 
-    fn separate(&mut self, flock: &[Boid]) -> Vec2 {
+    fn separate(&self, flock: &[Boid]) -> Vec2 {
         // The final vector to steer towards
         let mut steering = Vec2::ZERO;
         let mut total = 0;
@@ -333,7 +333,7 @@ impl Default for Boid {
             perception_radius: 2.5,
             alignment_modifier: 1.0,
             cohesion_modifier: 1.0,
-            separation_modifier: 1.0,
+            separation_modifier: 0.9,
         }
     }
 }
