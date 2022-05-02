@@ -202,7 +202,7 @@ pub struct Keybinds {
 }
 
 impl Keybinds {
-    pub fn new() -> Keybinds {
+    pub fn new() -> Self {
         Keybinds {
             highlight_all: false,
             highlight_first: false,
