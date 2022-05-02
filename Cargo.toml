@@ -7,10 +7,11 @@ license = "MIT"
 readme = "README.md"
 repository = "https://github.com/sandalbanditten/boids-rs"
 description = """
-A simple program to get the current time since the Unix Epoch.
+A simulation of boids, written with nannou and using rayon for parallelism.
 """
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 nannou = "0.18"
+rayon = "1.5"
