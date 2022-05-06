@@ -1,5 +1,5 @@
 use crate::model::Model;
-use nannou::prelude::{text, Draw, Rect};
+use nannou::prelude::{text, Draw, Rect, Vec2};
 
 pub fn show_help_menu(draw: &Draw, win_rect: Rect) {
     draw.text(
@@ -33,7 +33,7 @@ pub fn show_help_menu(draw: &Draw, win_rect: Rect) {
   0 - increase separation modifier",
     )
     .xy(win_rect.top_left())
-    .w_h(0.0, 0.0)
+    .wh(Vec2::ZERO)
     .no_line_wrap()
     .justify(text::Justify::Left)
     .align_text_top()
@@ -57,7 +57,7 @@ pub fn show_current_values(draw: &Draw, win_rect: Rect, model: &Model) {
             "\
 Current values:
 Number of boids: {}
-Perception range: {}
+Perception radius: {}
 Diameter of boids: {}
 Max speed: {}
 Max force: {}
@@ -66,7 +66,7 @@ Cohesion modifier: {}
 Separation modifier: {}",
             // The values to be put into the string
             model.flock.len(),
-            first.get_perception(),
+            first.get_perception_radius(),
             first.get_diameter(),
             first.get_max_speed(),
             first.get_max_force(),
@@ -77,7 +77,7 @@ Separation modifier: {}",
     };
     draw.text(text.as_str())
         .x_y(win_rect.right() - 0.5, win_rect.bottom() + 0.5)
-        .w_h(0.0, 0.0)
+        .wh(Vec2::ZERO)
         .no_line_wrap()
         .justify(text::Justify::Right)
         .align_text_bottom()
