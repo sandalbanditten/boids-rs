@@ -45,9 +45,9 @@ impl Boid {
              *     *
              */
             .points(
-                Point2::new(self.diameter / 2.0, 0.0),
-                Point2::new(-self.diameter / 2.0, -self.diameter / 2.0),
-                Point2::new(-self.diameter / 2.0, self.diameter / 2.0),
+                Point2::new(self.get_radius(), 0.0),
+                Point2::new(-self.get_radius(), -self.get_radius()),
+                Point2::new(-self.get_radius(), self.get_radius()),
             )
             .w_h(self.diameter, self.diameter)
             // Set its angle to the boids velocity angle - where the boid is facing
@@ -61,7 +61,7 @@ impl Boid {
         // making sure the alpha is between 0.0 and 1.0 - this might happen internally in the function, though this is not discernable from the source code
         alpha = alpha.clamp(0.0, 1.0);
         draw.ellipse()
-            .w_h(self.perception_radius * 2.0, self.perception_radius * 2.0)
+            .w_h(self.get_perception_diameter(), self.get_perception_diameter())
             .xy(self.position)
             .rgba(1.0, 1.0, 1.0, alpha);
     }
@@ -99,17 +99,17 @@ impl Boid {
         self.acceleration = Vec2::ZERO;
 
         // Check if stuff is inside bounds
-        if self.position.x < boundary_rect.left() + self.diameter / 2.0 {
-            self.position.x = boundary_rect.right() - self.diameter / 2.0;
+        if self.position.x < boundary_rect.left() + self.get_radius() {
+            self.position.x = boundary_rect.right() - self.get_radius();
         }
-        if self.position.x > boundary_rect.right() - self.diameter / 2.0 {
-            self.position.x = boundary_rect.left() + self.diameter / 2.0;
+        if self.position.x > boundary_rect.right() - self.get_radius() {
+            self.position.x = boundary_rect.left() + self.get_radius();
         }
-        if self.position.y < boundary_rect.bottom() + self.diameter / 2.0 {
-            self.position.y = boundary_rect.top() - self.diameter / 2.0;
+        if self.position.y < boundary_rect.bottom() + self.get_radius() {
+            self.position.y = boundary_rect.top() - self.get_radius();
         }
-        if self.position.y > boundary_rect.top() - self.diameter / 2.0 {
-            self.position.y = boundary_rect.bottom() + self.diameter / 2.0;
+        if self.position.y > boundary_rect.top() - self.get_radius() {
+            self.position.y = boundary_rect.bottom() + self.get_radius();
         }
     }
 
@@ -199,8 +199,13 @@ impl Boid {
 
     // Functions for getting attributes //
     // Returns the perception radius of the boid
-    pub fn get_perception(&self) -> f32 {
+    pub fn get_perception_radius(&self) -> f32 {
         self.perception_radius
+    }
+
+    // Return the perception diameter of the boid
+    pub fn get_perception_diameter(&self) -> f32 {
+        self.perception_radius * 2.0
     }
 
     // Returns the diameter of the boid
@@ -231,6 +236,11 @@ impl Boid {
     // Returns the separation modifier of the boid
     pub fn get_separation_modifier(&self) -> f32 {
         self.separation_modifier
+    }
+
+    // Returns the radius of the boid
+    pub fn get_radius(&self) -> f32 {
+        self.diameter / 2.0
     }
 
     // Functions for changing attributes //
@@ -323,9 +333,9 @@ impl Boid {
 impl Default for Boid {
     fn default() -> Self {
         Boid {
-            position: Vec2::new(0.0, 0.0),
+            position: Vec2::ZERO,
             velocity: Vec2::new(random_range(-0.1, 0.1), random_range(-0.1, 0.1)),
-            acceleration: Vec2::new(0.0, 0.0),
+            acceleration: Vec2::ZERO,
             max_speed: 0.075,
             max_force: 0.0005,
             color: Color::new(1.0, 1.0, 1.0, 1.0),

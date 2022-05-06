@@ -9,14 +9,10 @@ pub fn key_pressed(app: &App, model: &mut Model, key: Key) {
             // Add a new boid
             // Copy the first boid and add it, if there is a first boid
             if model.flock.is_empty() {
-                // model.flock.push(Boid::new(
-                //     Vec2::new(0.0, 0.0),
-                //     Vec2::new(random_range(-0.1, 0.1), random_range(-0.1, 0.1)),
-                // ));
                 model.flock.push(Boid::default())
             } else {
                 let mut new_boid = model.flock.first().cloned().unwrap();
-                new_boid.change_position(Vec2::new(0.0, 0.0));
+                new_boid.change_position(Vec2::ZERO);
                 new_boid
                     .change_velocity(Vec2::new(random_range(-0.1, 0.1), random_range(-0.1, 0.1)));
                 model.flock.push(new_boid);
