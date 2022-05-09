@@ -58,10 +58,14 @@ impl Boid {
     // Draws a transparent circle at the boids position, with a radius equal to the boids
     // perception_radius
     pub fn show_perception(&self, draw: &Draw, mut alpha: f32) {
-        // making sure the alpha is between 0.0 and 1.0 - this might happen internally in the function, though this is not discernable from the source code
+        // making sure the alpha is between 0.0 and 1.0
+        // this might happen internally in the function, though this is not discernable from the source code
         alpha = alpha.clamp(0.0, 1.0);
         draw.ellipse()
-            .w_h(self.get_perception_diameter(), self.get_perception_diameter())
+            .w_h(
+                self.get_perception_diameter(),
+                self.get_perception_diameter(),
+            )
             .xy(self.position)
             .rgba(1.0, 1.0, 1.0, alpha);
     }
