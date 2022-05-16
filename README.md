@@ -4,8 +4,6 @@ A simple flocking simulation written in rust, using [nannou](https://nannou.cc/)
 
 The three basic rules for flocking come from [here](https://www.red3d.com/cwr/boids/).
 
-TODO: Add a demonstration GIF
-
 ## Features
 
 * Keyboard controls
@@ -14,9 +12,9 @@ TODO: Add a demonstration GIF
 
 ## Version
 
-This is version 0.1.0.
+This is version 1.0.0.
 
-Version 0.2.0 will add quadtree subdivision.
+Version 2.0.0 will add quadtree subdivision.
 
 No more major versions are planned beyond these two.
 
