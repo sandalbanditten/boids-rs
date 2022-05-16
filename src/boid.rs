@@ -346,8 +346,8 @@ impl Default for Boid {
             color: Color::new(1.0, 1.0, 1.0, 1.0),
             diameter: 10.0,
             perception_radius: 100.0,
-            alignment_modifier: 1.0,
-            cohesion_modifier: 1.0,
+            alignment_modifier: 0.8,
+            cohesion_modifier: 0.8,
             separation_modifier: 0.9,
         }
     }
