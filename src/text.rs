@@ -1,6 +1,8 @@
 use crate::model::Model;
 use nannou::prelude::{text, Draw, Rect, Vec2};
 
+const FONT_SIZE: u32 = 22;
+
 pub fn show_help_menu(draw: &Draw, win_rect: Rect) {
     draw.text(
         "\
@@ -37,7 +39,7 @@ pub fn show_help_menu(draw: &Draw, win_rect: Rect) {
     .no_line_wrap()
     .justify(text::Justify::Left)
     .align_text_top()
-    .font_size(1)
+    .font_size(FONT_SIZE)
     .rgba(1.0, 1.0, 1.0, 0.5);
 }
 
@@ -76,11 +78,11 @@ Separation modifier: {}",
         )
     };
     draw.text(text.as_str())
-        .x_y(win_rect.right() - 0.5, win_rect.bottom() + 0.5)
+        .x_y(win_rect.right() - 5.0, win_rect.bottom() + 5.0)
         .wh(Vec2::ZERO)
         .no_line_wrap()
         .justify(text::Justify::Right)
         .align_text_bottom()
-        .font_size(1)
+        .font_size(FONT_SIZE)
         .rgba(1.0, 1.0, 1.0, 0.5);
 }
