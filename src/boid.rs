@@ -88,6 +88,7 @@ impl Boid {
         // Update velocity and position - and resetting acceleration
         self.update(win_rect);
         // Update colors based on pos, vel, and acc - updating after self.update() is important
+
         self.update_color(win_rect);
     }
 
