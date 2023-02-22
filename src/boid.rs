@@ -1,9 +1,9 @@
 use crate::color::Color;
-use crate::math::map;
+use crate::math;
 use nannou::prelude::{random_range, Draw, Point2, Rect, Vec2, Vec2Angle};
 
 // So we can compare boids using ==
-#[derive(PartialEq, Clone)]
+#[derive(PartialEq, Clone, Copy)]
 pub struct Boid {
     position: Vec2,
     velocity: Vec2,
@@ -15,15 +15,15 @@ pub struct Boid {
     // How far the boid can "see"
     perception_radius: f32,
     // These three modifiers get applied to the alignment etc. to scale it
-    alignment_modifier: f32,
-    cohesion_modifier: f32,
-    separation_modifier: f32,
+    alignment_mod: f32,
+    cohesion_mod: f32,
+    separation_mod: f32,
 }
 
 impl Boid {
     // Constructor //
     pub fn new(position: Vec2, velocity: Vec2) -> Self {
-        Boid {
+        Self {
             position,
             // Sets the length of the vector to 0.075
             velocity: velocity.normalize().clamp_length(0.075, 0.075),
@@ -39,15 +39,15 @@ impl Boid {
             .xy(self.position)
             // A triangle pointing to the right - so it has an angle of zero degrees
             // Basically looks like this:
-            /*
-             *     *
-             *         *
-             *     *
-             */
+            //
+            //     *
+            //         *
+            //     *
+            //
             .points(
-                Point2::new(self.get_radius(), 0.0),
-                Point2::new(-self.get_radius(), -self.get_radius()),
-                Point2::new(-self.get_radius(), self.get_radius()),
+                Point2::new(self.radius(), 0.0),
+                Point2::new(-self.radius(), -self.radius()),
+                Point2::new(-self.radius(), self.radius()),
             )
             .w_h(self.diameter, self.diameter)
             // Set its angle to the boids velocity angle - where the boid is facing
@@ -76,9 +76,9 @@ impl Boid {
     pub fn flock(&mut self, flock: &[Boid], win_rect: Rect) {
         // Changed from &Vec<Boid> to &[Boid], from vector type to slice type
         // The three rules
-        let alignment = self.align(flock) * self.alignment_modifier;
-        let cohesion = self.cohere(flock) * self.cohesion_modifier;
-        let separation = self.separate(flock) * self.separation_modifier;
+        let alignment = self.align(flock) * self.alignment_mod;
+        let cohesion = self.cohere(flock) * self.cohesion_mod;
+        let separation = self.separate(flock) * self.separation_mod;
 
         // Updating the acceleration
         self.acceleration += alignment;
@@ -104,17 +104,17 @@ impl Boid {
         self.acceleration = Vec2::ZERO;
 
         // Check if stuff is inside bounds
-        if self.position.x < boundary_rect.left() + self.get_radius() {
-            self.position.x = boundary_rect.right() - self.get_radius();
+        if self.position.x < boundary_rect.left() + self.radius() {
+            self.position.x = boundary_rect.right() - self.radius();
         }
-        if self.position.x > boundary_rect.right() - self.get_radius() {
-            self.position.x = boundary_rect.left() + self.get_radius();
+        if self.position.x > boundary_rect.right() - self.radius() {
+            self.position.x = boundary_rect.left() + self.radius();
         }
-        if self.position.y < boundary_rect.bottom() + self.get_radius() {
-            self.position.y = boundary_rect.top() - self.get_radius();
+        if self.position.y < boundary_rect.bottom() + self.radius() {
+            self.position.y = boundary_rect.top() - self.radius();
         }
-        if self.position.y > boundary_rect.top() - self.get_radius() {
-            self.position.y = boundary_rect.bottom() + self.get_radius();
+        if self.position.y > boundary_rect.top() - self.radius() {
+            self.position.y = boundary_rect.bottom() + self.radius();
         }
     }
 
@@ -123,7 +123,8 @@ impl Boid {
         // Compute the average steering
         let mut steering = Vec2::ZERO;
         let mut total = 0;
-        for other in flock.iter() {
+        // TODO: Parallelize this with rayon?
+        for other in flock {
             let distance = self.position.distance(other.position);
             // Only count the ones within perception_radius and the ones that arent itself
             if distance < self.perception_radius && self != other {
@@ -230,21 +231,21 @@ impl Boid {
 
     // Returns the alignment modifier of the boid
     pub fn get_alignment_modifier(&self) -> f32 {
-        self.alignment_modifier
+        self.alignment_mod
     }
 
     // Returns the cohesion modifier of the boid
     pub fn get_cohesion_modifier(&self) -> f32 {
-        self.cohesion_modifier
+        self.cohesion_mod
     }
 
     // Returns the separation modifier of the boid
     pub fn get_separation_modifier(&self) -> f32 {
-        self.separation_modifier
+        self.separation_mod
     }
 
     // Returns the radius of the boid
-    pub fn get_radius(&self) -> f32 {
+    pub fn radius(&self) -> f32 {
         self.diameter / 2.0
     }
 
@@ -271,17 +272,17 @@ impl Boid {
 
     // Changes the alignment modifier of the boid
     pub fn change_alignment_modifier(&mut self, multiplier: f32) {
-        self.alignment_modifier *= multiplier;
+        self.alignment_mod *= multiplier;
     }
 
     // Changes the cohesion modifier of the boid
     pub fn change_cohesion_modifier(&mut self, multiplier: f32) {
-        self.cohesion_modifier *= multiplier;
+        self.cohesion_mod *= multiplier;
     }
 
     // Changes the separation modifier of the boid
     pub fn change_separation_modifier(&mut self, multiplier: f32) {
-        self.separation_modifier *= multiplier;
+        self.separation_mod *= multiplier;
     }
 
     // Changes the position of the boid
@@ -306,7 +307,7 @@ impl Boid {
         // G - X-position
         // B - Y-position
         self.color = Color::new(
-            map(
+            math::map(
                 self.velocity.length(),
                 0.0,
                 self.get_max_speed(),
@@ -314,7 +315,7 @@ impl Boid {
                 upper,
             ),
             // Map left to right
-            map(
+            math::map(
                 self.position.x,
                 win_rect.left(),
                 win_rect.right(),
@@ -322,7 +323,7 @@ impl Boid {
                 upper,
             ),
             // Map bottom to top
-            map(
+            math::map(
                 self.position.y,
                 win_rect.bottom(),
                 win_rect.top(),
@@ -337,18 +338,18 @@ impl Boid {
 // The default implementation for boids - the middle of the screen etc.
 impl Default for Boid {
     fn default() -> Self {
-        Boid {
+        Self {
             position: Vec2::ZERO,
             velocity: Vec2::new(random_range(-0.1, 0.1), random_range(-0.1, 0.1)),
             acceleration: Vec2::ZERO,
-            max_speed: 1.25,
+            max_speed: 5.0,
             max_force: 0.025,
             color: Color::new(1.0, 1.0, 1.0, 1.0),
             diameter: 10.0,
             perception_radius: 100.0,
-            alignment_modifier: 0.8,
-            cohesion_modifier: 0.8,
-            separation_modifier: 0.9,
+            alignment_mod: 0.8,
+            cohesion_mod: 0.8,
+            separation_mod: 0.9,
         }
     }
 }
