@@ -2,7 +2,8 @@ use crate::boid::Boid;
 use crate::flock::Flock;
 use crate::keys::{key_pressed, key_released, Keybinds};
 use crate::view;
-use crate::window::window_resized;
+use crate::window::resized;
+
 use nannou::prelude::{App, Draw, Rect};
 
 const INITIAL_BOIDS: usize = 1024;
@@ -20,11 +21,11 @@ impl Model {
         // Creating the window
         let _window = app
             .new_window()
-            .title(format!("{} boids!", INITIAL_BOIDS))
+            .title(format!("{INITIAL_BOIDS} boids!"))
             // Functions to call at certain event
             .key_pressed(key_pressed)
             .key_released(key_released)
-            .resized(window_resized)
+            .resized(resized)
             .view(view)
             .build()
             .expect("Unable to build the app");
@@ -33,9 +34,9 @@ impl Model {
         let win_rect = app.window_rect();
 
         // Our model is the state of our application, which can be accessed from all functions
-        Model {
+        Self {
             flock: Flock::new_flock(win_rect, INITIAL_BOIDS),
-            keybinds: Keybinds::new(),
+            keybinds: Keybinds::default(),
             win_rect,
             draw: app.draw(),
         }

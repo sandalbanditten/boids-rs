@@ -1,5 +1,5 @@
 // So we can compare boids, which have a Color field, using ==
-#[derive(PartialEq, Clone)]
+#[derive(PartialEq, Clone, Copy)]
 pub struct Color {
     pub r: f32,
     pub g: f32,
@@ -8,7 +8,7 @@ pub struct Color {
 }
 
 impl Color {
-    pub fn new(r: f32, g: f32, b: f32, a: f32) -> Self {
-        Color { r, g, b, a }
+    pub const fn new(r: f32, g: f32, b: f32, a: f32) -> Self {
+        Self { r, g, b, a }
     }
 }

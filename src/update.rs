@@ -1,12 +1,13 @@
 use crate::model::Model;
 use crate::text::{show_current_values, show_help_menu};
+
 use nannou::prelude::{App, Frame, Update};
 use rayon::prelude::*;
 
 // Update the state of our application every frame
 pub fn update(_app: &App, model: &mut Model, _update: Update) {
-    // Create a temp flock, to ensure thread safety, so that the actual flock is not getting
-    // modified *and* compared to at the same time
+    // Create a temp flock, to ensure thread safety, so that the actual flock
+    // is not getting modified *and* compared to at the same time
     let temp_flock = model.flock.clone();
     model
         .flock
@@ -22,7 +23,7 @@ pub fn view(app: &App, model: &Model, frame: Frame) {
     // Only highlight the first boid, if it exists
     if model.keybinds.highlight_first {
         if let Some(boid) = model.flock.first() {
-            boid.show_perception(&model.draw, 0.025)
+            boid.show_perception(&model.draw, 0.025);
         }
     }
 
@@ -45,6 +46,8 @@ pub fn view(app: &App, model: &Model, frame: Frame) {
     }
 
     // Push stuff to screen
-    model.draw.to_frame(app, &frame)
+    model
+        .draw
+        .to_frame(app, &frame)
         .expect("Unable to draw to the frame");
 }

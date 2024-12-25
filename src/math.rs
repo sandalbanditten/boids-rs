@@ -1,4 +1,5 @@
 use std::ops::{Add, Div, Mul, Sub};
+
 // Map a number within a range, to within another range
 pub fn map<T>(num: T, start_one: T, stop_one: T, start_two: T, stop_two: T) -> T
 where

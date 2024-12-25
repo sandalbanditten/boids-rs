@@ -1,5 +1,6 @@
-use crate::model::Model;
-use crate::update::{update, view};
+use model::Model;
+use update::{update, view};
+
 mod boid;
 mod color;
 mod flock;

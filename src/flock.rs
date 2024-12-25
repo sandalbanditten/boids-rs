@@ -1,4 +1,5 @@
 use crate::boid::Boid;
+
 use nannou::prelude::{random_range, Rect, Vec2};
 
 pub struct Flock;

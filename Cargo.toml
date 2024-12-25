@@ -13,5 +13,6 @@ A simulation of boids, written with nannou and using rayon for parallelism.
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-nannou = "0.18"
+# nannou = "0.18"
+nannou = "0.19"
 rayon = "1.5"

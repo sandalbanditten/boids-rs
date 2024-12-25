@@ -21,7 +21,6 @@ pub struct Boid {
 }
 
 impl Boid {
-    // Constructor //
     pub fn new(position: Vec2, velocity: Vec2) -> Self {
         Self {
             position,
@@ -32,16 +31,15 @@ impl Boid {
         }
     }
 
-    // For showing boids //
     // Shows the boid to the screen, as a triangle, pointing in the same direction as the boid
     pub fn show(&self, draw: &Draw) {
         draw.tri()
             .xy(self.position)
             // A triangle pointing to the right - so it has an angle of zero degrees
-            // Basically looks like this:
+            // Basically looks like this, where the `o` is the origin:
             //
             //     *
-            //         *
+            //      o *  --->  |>
             //     *
             //
             .points(
@@ -62,18 +60,15 @@ impl Boid {
         // this might happen internally in the function, though this is not discernable from the source code
         alpha = alpha.clamp(0.0, 1.0);
         draw.ellipse()
-            .w_h(
-                self.get_perception_diameter(),
-                self.get_perception_diameter(),
-            )
+            .w_h(self.perception_diameter(), self.perception_diameter())
             .xy(self.position)
             .rgba(1.0, 1.0, 1.0, alpha);
     }
 
-    // The three rules //
+    /* The three rules */
     // The main flocking function - calls the three rules, and updates the boids with color and
     // movement
-    pub fn flock(&mut self, flock: &[Boid], win_rect: Rect) {
+    pub fn flock(&mut self, flock: &[Self], win_rect: Rect) {
         // Changed from &Vec<Boid> to &[Boid], from vector type to slice type
         // The three rules
         let alignment = self.align(flock) * self.alignment_mod;
@@ -119,7 +114,7 @@ impl Boid {
     }
 
     // The three separate methods for the three rules
-    fn align(&self, flock: &[Boid]) -> Vec2 {
+    fn align(&self, flock: &[Self]) -> Vec2 {
         // Compute the average steering
         let mut steering = Vec2::ZERO;
         let mut total = 0;
@@ -145,11 +140,11 @@ impl Boid {
         steering
     }
 
-    fn cohere(&self, flock: &[Boid]) -> Vec2 {
+    fn cohere(&self, flock: &[Self]) -> Vec2 {
         // Compute the average location
         let mut steering = Vec2::ZERO;
         let mut total = 0;
-        for other in flock.iter() {
+        for other in flock {
             let distance = self.position.distance(other.position);
             // Only count the ones within perception_radius and the ones that arent itself
             if distance < self.perception_radius && self != other {
@@ -172,7 +167,7 @@ impl Boid {
         steering
     }
 
-    fn separate(&self, flock: &[Boid]) -> Vec2 {
+    fn separate(&self, flock: &[Self]) -> Vec2 {
         // The final vector to steer towards
         let mut steering = Vec2::ZERO;
         let mut total = 0;
@@ -205,42 +200,42 @@ impl Boid {
 
     // Functions for getting attributes //
     // Returns the perception radius of the boid
-    pub fn get_perception_radius(&self) -> f32 {
+    pub const fn perception_radius(&self) -> f32 {
         self.perception_radius
     }
 
     // Return the perception diameter of the boid
-    pub fn get_perception_diameter(&self) -> f32 {
+    pub fn perception_diameter(&self) -> f32 {
         self.perception_radius * 2.0
     }
 
     // Returns the diameter of the boid
-    pub fn get_diameter(&self) -> f32 {
+    pub const fn diameter(&self) -> f32 {
         self.diameter
     }
 
     // Returns the max speed of the boid
-    pub fn get_max_speed(&self) -> f32 {
+    pub const fn max_speed(&self) -> f32 {
         self.max_speed
     }
 
     // Returns the max force of the boid
-    pub fn get_max_force(&self) -> f32 {
+    pub const fn max_force(&self) -> f32 {
         self.max_force
     }
 
     // Returns the alignment modifier of the boid
-    pub fn get_alignment_modifier(&self) -> f32 {
+    pub const fn alignment_modifier(&self) -> f32 {
         self.alignment_mod
     }
 
     // Returns the cohesion modifier of the boid
-    pub fn get_cohesion_modifier(&self) -> f32 {
+    pub const fn cohesion_modifier(&self) -> f32 {
         self.cohesion_mod
     }
 
     // Returns the separation modifier of the boid
-    pub fn get_separation_modifier(&self) -> f32 {
+    pub const fn separation_modifier(&self) -> f32 {
         self.separation_mod
     }
 
@@ -307,13 +302,7 @@ impl Boid {
         // G - X-position
         // B - Y-position
         self.color = Color::new(
-            math::map(
-                self.velocity.length(),
-                0.0,
-                self.get_max_speed(),
-                lower,
-                upper,
-            ),
+            math::map(self.velocity.length(), 0.0, self.max_speed(), lower, upper),
             // Map left to right
             math::map(
                 self.position.x,
@@ -331,7 +320,7 @@ impl Boid {
                 upper,
             ),
             1.0,
-        )
+        );
     }
 }
 
